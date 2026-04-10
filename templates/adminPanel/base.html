@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock title %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <link rel="stylesheet" href="{{ url_for('static', filename='adminPanel/css/admin_common.css') }}">
+    
+</head>
+
+<body class="bg-[#f8fafc] text-slate-900">
+
+<div id="sidebar-overlay" class="fixed inset-0 bg-slate-900/60 z-40 hidden lg:hidden backdrop-blur-sm transition-opacity duration-300" onclick="toggleSidebar()"></div>
+
+
+<div id="floating-toggle" 
+     class="lg:hidden fixed z-[60] touch-none" 
+     style="top: 24px; left: 24px;">
+    
+    <button onclick="toggleSidebar()" 
+            id="drag-handle"
+            class="bg-white p-4 rounded-2xl shadow-xl border border-slate-100 text-slate-600 active:scale-95 transition-transform cursor-move">
+        <i class="fas fa-bars-staggered text-xl"></i>
+    </button>
+</div>
+
+<aside id="sidebar" class="fixed top-0 left-0 w-72 bg-[#0f172a] text-slate-400 z-50 border-r border-slate-800 shadow-2xl transition-all duration-300 ease-in-out transform -translate-x-full lg:translate-x-0">
+    
+    <div class="flex flex-col h-full overflow-hidden">
+        
+        <div class="p-8 flex-shrink-0">
+            <div class="flex items-center space-x-3 text-white group cursor-pointer">
+                <div class="w-11 h-11 bg-blue-600 rounded-xl flex items-center justify-center shadow-[0_0_20px_rgba(37,99,235,0.3)] group-hover:rotate-[360deg] transition-all duration-700">
+                    <i class="fas fa-indian-rupee-sign text-xl"></i>
+                </div>
+                <div>
+                    <span class="text-xl font-black tracking-tight block leading-none">FinTrack</span>
+                    <span class="text-[9px] text-blue-400 font-bold uppercase tracking-[0.2em] mt-1.5 block">Enterprise Admin</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex-1 overflow-y-auto px-4 pb-10 sidebar-scroll">
+            
+            
+            <nav class="space-y-2">
+    
+                <div class="space-y-1">
+                    <a href="/admin-dashboard" 
+                    class="w-full flex items-center justify-center px-6 py-3.5 rounded-2xl bg-blue-600 shadow-lg shadow-blue-500/30 hover:bg-blue-700 group transition-all duration-300">
+                        <span class="text-sm font-bold text-white tracking-wide">
+                            Dashboard
+                        </span>
+                    </a>
+                </div>
+
+                <div class="pt-8 pb-2 px-4">
+                    <p class="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">Master Configuration</p>
+                </div>
+
+                <div class="space-y-1">
+                    <button onclick="toggleDropdown('master-menu')" class="w-full flex items-center justify-between px-5 py-3.5 rounded-2xl hover:bg-blue-600/10 group transition-all duration-300 text-left">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-9 h-9 rounded-lg bg-slate-800 flex items-center justify-center group-hover:bg-blue-600 transition-all">
+                                <i class="fas fa-cogs text-sm group-hover:text-white"></i>
+                            </div>
+                            <span class="text-sm font-semibold group-hover:text-blue-400">Master Settings</span>
+                        </div>
+                        <i class="fas fa-chevron-down text-[10px] opacity-40 chevron-rotate transition-transform duration-300" id="master-icon"></i>
+                    </button>
+
+                    <div id="master-menu" class="submenu-container pl-10 pr-2 space-y-1">
+                        <a href="/loan-type-view" class="submenu-item blue-hover flex items-center space-x-3 px-4 py-2.5 rounded-xl text-[13px]">
+                            <i class="fas fa-eye text-[10px]"></i><span>Loan Types (View)</span>
+                        </a>
+                        <a href="/loan-type-with-spread" class="submenu-item blue-hover flex items-center space-x-3 px-4 py-2.5 rounded-xl text-[13px]">
+                            <i class="fas fa-plus-circle text-[10px]"></i><span>Loan Type With Spread</span>
+                        </a>
+                        <a href="/gold-type-master" class="submenu-item blue-hover flex items-center space-x-3 px-4 py-2.5 rounded-xl text-[13px]">
+                            <i class="fas fa-layer-group text-[10px]"></i><span>Gold Type Master</span>
+                        </a>
+                        <a href="/gold-purity-master" class="submenu-item blue-hover flex items-center space-x-3 px-4 py-2.5 rounded-xl text-[13px]">
+                            <i class="fas fa-vial text-[10px]"></i><span>Gold Purity Master</span>
+                        </a>
+                        <a href="/bike-master" class="submenu-item blue-hover flex items-center space-x-3 px-4 py-2.5 rounded-xl text-[13px]">
+                            <i class="fas fa-motorcycle text-[10px]"></i><span>Bike Master</span>
+                        </a>
+                        <div class="h-[1px] bg-slate-800/50 my-2 mx-4"></div>
+                        <a href="/staff-registration-form" class="submenu-item blue-hover flex items-center space-x-3 px-4 py-2.5 rounded-xl text-[13px]">
+                            <i class="fas fa-user-plus text-[10px]"></i><span>Staff Registration</span>
+                        </a>
+                        <a href="/staff-view" class="submenu-item blue-hover flex items-center space-x-3 px-4 py-2.5 rounded-xl text-[13px]">
+                            <i class="fas fa-users-viewfinder text-[10px]"></i><span>Staff View</span>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="pt-6 pb-2 px-4">
+                    <p class="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">Customer Lifecycle</p>
+                </div>
+
+                <div class="space-y-1">
+                    <button onclick="toggleDropdown('customer-menu')" class="w-full flex items-center justify-between px-5 py-3.5 rounded-2xl hover:bg-yellow-500/10 group transition-all duration-300 text-left">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-9 h-9 rounded-lg bg-slate-800 flex items-center justify-center group-hover:bg-yellow-500 transition-all">
+                                <i class="fas fa-user-shield text-sm group-hover:text-white"></i>
+                            </div>
+                            <span class="text-sm font-semibold group-hover:text-yellow-500">Customer Desk</span>
+                        </div>
+                        <i class="fas fa-chevron-down text-[10px] opacity-40 chevron-rotate transition-transform duration-300" id="customer-icon"></i>
+                    </button>
+
+                    <div id="customer-menu" class="submenu-container pl-10 pr-2 space-y-1">
+                        <a href="/document-verification" class="submenu-item yellow-hover flex items-center space-x-3 px-4 py-2.5 rounded-xl text-[13px]">
+                            <i class="fas fa-address-card text-[10px]"></i><span>Document Verification</span>
+                        </a>
+                        <a href="/loan-approved" class="submenu-item yellow-hover flex items-center space-x-3 px-4 py-2.5 rounded-xl text-[13px]">
+                            <i class="fas fa-file-signature text-[10px]"></i><span>Loan Approved</span>
+                        </a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+
+        <div class="mt-auto border-t border-slate-800 bg-[#0f172a] footer-group flex-shrink-0">
+            <div id="profile-menu" class="submenu-container px-4 overflow-hidden">
+                <div class="space-y-1 mt-4">
+                    <div onclick="openAdminProfile()" class="submenu-item blue-hover flex items-center space-x-3 px-5 py-2.5 rounded-xl text-sm transition-all group">
+                        <div class="w-8 h-8 rounded-lg bg-slate-800/50 flex items-center justify-center group-hover:bg-blue-600 transition-colors">
+                            <i class="fas fa-user text-[11px] text-slate-400 group-hover:text-white transition-colors"></i>
+                        </div>
+                        
+                        <span class="font-semibold text-slate-300 group-hover:text-white transition-colors">My Profile</span>
+                    </div>
+                    <a href="/logout" class="submenu-item logout-hover flex items-center space-x-3 px-5 py-2.5 rounded-xl text-red-400 font-bold text-sm transition-all">
+                        <div class="w-8 h-8 rounded-lg bg-red-500/10 flex items-center justify-center">
+                            <i class="fas fa-power-off text-[10px]"></i>
+                        </div>
+                        <span>Log Out</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="p-4 cursor-pointer" onclick="toggleDropdown('profile-menu')">
+                <div class="flex items-center space-x-3 bg-slate-800/30 p-3 rounded-2xl border border-white/5 hover:bg-slate-800/60 transition-all">
+                    <div class="relative">
+                        <div class="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white font-bold text-sm overflow-hidden border border-white/10 shadow-lg">
+                            
+                            {% if session.get('profile_image') %}
+                            <img id="sidebar-admin-img" class=" w-full h-full object-cover" src="{{session.get('profile_image')}}" alt="Admin">
+                            
+                            {%else%}
+                            
+                             <span id="sidebar-default-avatar">AU</span>
+
+                            {%endif%}
+                        </div>
+
+                        <div class="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-green-500 border-2 border-[#0f172a] rounded-full"></div>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center justify-between">
+                            <p class="text-xs font-bold text-white truncate">Admin</p>
+                            <i class="fas fa-chevron-up text-[9px] text-slate-500 chevron-rotate transition-transform duration-300" id="profile-icon"></i>
+                        </div>
+                        <p class="text-[10px] text-slate-500 truncate font-medium">
+                            {% if session.get('email') %}
+                            {{session.get('email')}}
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</aside>
+
+
+
+
+<main class="transition-all duration-300 lg:ml-72 min-h-screen p-8 ">
+    <div class="max-w-7xl mx-auto">
+        <div id="notification-container" class="fixed top-8 right-8 z-[100] flex flex-col gap-4 pointer-events-none"></div>
+        {% block content %}{% endblock content %}
+    </div>
+
+</main>
+
+
+<div id="adminProfileModal" class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-md"></div>
+    
+    <div class="relative bg-white w-full max-w-md rounded-[32px] shadow-2xl overflow-hidden animate__animated animate__fadeInUp animate__faster">
+        
+        <div class="relative h-32 bg-gradient-to-br from-blue-600 to-indigo-700">
+            <div class="absolute -bottom-12 left-1/2 -translate-x-1/2">
+                <div class="relative group">
+                    <div class="w-24 h-24 rounded-3xl bg-white p-1 shadow-xl">
+                        <div id="admin-profile-container" class="w-full h-full rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center font-black text-3xl border border-slate-100 overflow-hidden">
+                           
+                            {% if session.get('profile_image') %}
+                            
+                            <img id="admin-preview-img" class="w-full h-full object-cover" src="{{session.get('profile_image')}}" alt="Admin">
+                            
+                            {% else %}
+                               <i id="admin-default-icon" class="fas fa-user-shield"></i>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <label for="admin-image-input" class="absolute bottom-0 right-0 w-8 h-8 bg-blue-600 text-white rounded-xl border-4 border-white flex items-center justify-center cursor-pointer hover:bg-blue-700 transition-all shadow-lg active:scale-90">
+                        <i class="fas fa-camera text-[10px]"></i>
+                    </label>
+                    <input type="file" id="admin-image-input" class="hidden" accept="image/*" onchange="uploadAdminImage(this)">
+                </div>
+            </div>
+            <button onclick="closeAdminProfile()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-black/10 text-white hover:bg-black/20 flex items-center justify-center transition-all">
+                <i class="fas fa-times text-xs"></i>
+            </button>
+        </div>
+
+        <div class="pt-16 p-8 text-center">
+            <h3 class="text-xl font-black text-slate-800 tracking-tight mb-1">Administrator</h3>
+            <p class="text-[10px] text-blue-600 font-black uppercase tracking-[0.2em] mb-8">System Superuser</p>
+
+            <div class="space-y-3 text-left">
+                <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100 flex items-center justify-between">
+                    <div>
+                        <p class="text-[9px] text-slate-400 font-black uppercase tracking-widest mb-1">Email Address</p>
+                        <p id="admin-display-email" class="text-sm font-bold text-slate-700">
+                            {% if session.get('email') %}
+                            {{session.get('email')}}
+                            {% endif %}
+                        </p>
+                    </div>
+                    <i class="fas fa-envelope text-slate-300"></i>
+                </div>
+
+                <div class="p-4 bg-indigo-50/50 rounded-2xl border border-indigo-100 flex items-center justify-between group transition-all">
+                    <div>
+                        <p class="text-[9px] text-indigo-400 font-black uppercase tracking-widest mb-1 text-left">Passkey Security</p>
+                        <div class="flex items-center gap-2">
+                            <div class="w-1.5 h-1.5 rounded-full {{ 'bg-emerald-500 animate-pulse' if session.get('has_passkey') else 'bg-slate-300' }}"></div>
+                            <p class="text-sm font-bold text-slate-700" id="key_info">{{ 'Active on Device' if session.get('has_passkey') else 'Not Registered' }}</p>
+                        </div>
+                    </div>
+                    
+                        <div class="flex items-center space-x-2">
+                            <button id="btn-passkey-remove" 
+                                    onclick="removePasskey()" 
+                                    style="display: none;" 
+                                    class="w-10 h-10 bg-white border border-rose-100 text-rose-500 rounded-xl flex items-center justify-center hover:bg-rose-500 hover:text-white transition-all shadow-sm">
+                                <i class="fas fa-trash-alt text-xs"></i>
+                            </button>
+
+                            <button id="btn-passkey-register" 
+                                    onclick="initiatePasskeyRegistration()" 
+                                    style="display: none;" 
+                                    class="w-10 h-10 bg-indigo-600 text-white rounded-xl flex items-center justify-center hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-200">
+                                <i class="fas fa-fingerprint"></i>
+                            </button>
+                        </div>
+                </div>
+
+            </div>
+
+            <div class="mt-6">
+                <button onclick="openUpdateCredentialsModal()" class="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all active:scale-95 flex items-center justify-center gap-3 shadow-lg shadow-blue-200">
+                    <i class="fas fa-user-cog"></i> Update Credentials
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<div id="updateCredentialsModal" class="fixed inset-0 z-[80] hidden flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"></div>
+    
+    <div class="relative bg-white w-full max-w-md rounded-[32px] shadow-2xl overflow-hidden animate__animated animate__zoomIn animate__faster">
+        <div class="p-6 bg-slate-50 border-b border-slate-100 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center shadow-md shadow-blue-100">
+                    <i class="fas fa-shield-alt text-xs"></i>
+                </div>
+                <h3 class="text-sm font-black text-slate-800 uppercase tracking-tight">Security Settings</h3>
+            </div>
+            <button onclick="closeUpdateCredentials()" class="text-slate-400 hover:text-slate-600">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+       <form id="update-admin-form" onsubmit="updateAdminCredentials(event)" class="p-8 space-y-5">
+            <div class="space-y-1">
+                <label class="text-[10px] font-black text-slate-500 uppercase ml-1">New Admin Email</label>
+                <input id="new-admin-email" type="email" placeholder="admin@fintrack.com" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold outline-none focus:ring-2 focus:ring-blue-500/10" required>
+            </div>
+
+            <hr class="border-slate-50">
+
+            <div class="space-y-1">
+                <label class="text-[10px] font-black text-slate-500 uppercase ml-1">New Password</label>
+                <div class="relative">
+                    <input id="new-admin-password" type="password" placeholder="••••••••" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold outline-none focus:ring-2 focus:ring-blue-500/10" required>
+                    <i class="fas fa-eye absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 cursor-pointer hover:text-blue-500 transition-colors" onclick="togglePassVisibility('new-admin-password')"></i>
+                </div>
+            </div>
+
+            <div class="space-y-1">
+                <label class="text-[10px] font-black text-slate-500 uppercase ml-1">Confirm New Password</label>
+                <input id="confirm-admin-password" type="password" placeholder="••••••••" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold outline-none focus:ring-2 focus:ring-blue-500/10" required>
+            </div>
+
+            <div class="pt-4 space-y-3">
+                <button type="submit" class="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl text-[11px] font-black uppercase tracking-widest shadow-lg shadow-blue-200 transition-all active:scale-95">
+                    Save Changes
+                </button>
+                <button type="button" onclick="closeUpdateCredentials()" class="w-full py-3 text-[10px] text-slate-400 font-bold uppercase hover:text-slate-600 transition-colors">
+                    Go Back
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
+
+
+<div id="global-loader" class="fixed inset-0 z-[9999] hidden flex-col items-center justify-center bg-slate-50/60 backdrop-blur-2xl transition-all duration-500">
+    <div class="flex space-x-2">
+        <div class="w-3 h-3 bg-blue-600 rounded-full animate-[loader-pulse_1.5s_ease-in-out_infinite] shadow-[0_0_15px_rgba(37,99,235,0.4)]"></div>
+        <div class="w-3 h-3 bg-blue-600 rounded-full animate-[loader-pulse_1.5s_ease-in-out_0.2s_infinite] shadow-[0_0_15px_rgba(37,99,235,0.4)]"></div>
+        <div class="w-3 h-3 bg-blue-600 rounded-full animate-[loader-pulse_1.5s_ease-in-out_0.4s_infinite] shadow-[0_0_15px_rgba(37,99,235,0.4)]"></div>
+        <div class="w-3 h-3 bg-blue-600 rounded-full animate-[loader-pulse_1.5s_ease-in-out_0.6s_infinite] shadow-[0_0_15px_rgba(37,99,235,0.4)]"></div>
+    </div>
+    
+    <div class="mt-8 text-center">
+        <p id="loader-text" class="text-slate-900 font-black text-[9px] uppercase tracking-[0.6em] mb-4 opacity-80">Finalizing</p>
+        
+        <div class="w-40 h-[1.5px] bg-slate-200/50 rounded-full overflow-hidden">
+            <div class="h-full bg-blue-600 w-1/3 animate-[loader-slide_2s_infinite_ease-in-out]"></div>
+        </div>
+    </div>
+</div>
+
+<div id="user-meta" 
+     data-role="{{ session.get('role') }}" 
+     data-id="{{ session.get('admin_id') or session.get('staff_id') or session.get('user_id') }}">
+</div>
+
+
+    {% if message %}
+     <input type="hidden" id="msg" value="{{message}}"/>
+     <input type="hidden" id="isSuccess" value="{{success}}"/>
+     <script> 
+        const msg=document.getElementById("msg").value;
+        const isSuccess=document.getElementById("isSuccess").value;
+        showNotify(msg,isSuccess);
+    </script>
+  {% endif %}
+
+ 
+  
+  <script src="{{ url_for('static', filename='adminPanel/js/admin_common.js') }}"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script src="{{ url_for('static', filename='passkey_access.js') }}"></script>
+</body>
+</html> 

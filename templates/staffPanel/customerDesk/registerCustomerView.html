@@ -1,0 +1,361 @@
+{% extends "staffPanel/base.html" %}
+
+{% block title %}FinTrack | Customer Details {% endblock title %}
+
+{% block content %}
+
+<div class="space-y-8 animate__animated animate__fadeInUp animate__faster pb-10">
+    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 items-center lg:items-start text-center lg:text-left animate__animated animate__fadeInDown">
+        <div>
+            <h1 class="text-2xl font-black text-slate-800 tracking-tight">Customer Details</h1>
+            <p class="text-sm text-slate-500 font-medium">Comprehensive management of client profiles</p>
+        </div>
+        <div class="flex gap-3">
+            <div class="px-4 py-2 bg-emerald-50 text-emerald-600 rounded-xl border border-emerald-100 flex items-center gap-2">
+                <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+                <span class="text-[10px] font-black uppercase tracking-widest">Live Database</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white p-4 rounded-3xl border border-slate-100 shadow-sm transition-all focus-within:shadow-md duration-300">
+        <div class="relative group">
+            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                <i class="fas fa-search text-slate-400 group-focus-within:text-emerald-500 transition-all"></i>
+            </div>
+            <input type="text" id="customerSearch" onkeyup="filterCustomers()" 
+                   class="block w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all" 
+                   placeholder="Search by id, name, email, or mobile...">
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8" id="customerContainer"></div>
+
+    <div id="pagination" class="hidden bg-white p-6 md:px-6 rounded-[2rem] border border-slate-100 shadow-sm flex flex-col md:flex-row items-center justify-between gap-6">
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4 order-1 md:order-2 w-full md:w-auto">
+            <div class="flex items-center justify-center space-x-2 w-full sm:w-auto">
+                <button onclick="changePage(-1)" id="prevBtn" class="h-11 w-11 rounded-xl border border-slate-100 bg-slate-50/50 text-slate-500 hover:bg-emerald-50 transition-all">
+                    <i class="fas fa-chevron-left text-xs"></i>
+                </button>
+            </div>
+            <div id="pageIndicator" class="flex items-center justify-center space-x-2"></div>
+            <div class="flex items-center justify-center space-x-2 w-full sm:w-auto">
+                <button onclick="changePage(1)" id="nextBtn" class="h-11 w-11 rounded-xl border border-slate-100 bg-slate-50/50 text-slate-500 hover:bg-emerald-50 transition-all">
+                    <i class="fas fa-chevron-right text-xs"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="px-5 py-2 bg-slate-50 rounded-full border border-slate-100 order-2 md:order-1 w-fit">
+            <p class="text-[10px] text-slate-400 font-black uppercase tracking-widest leading-none">
+                Showing <span id="startRange" class="text-slate-800 font-black">0</span> - <span id="endRange" class="text-slate-800 font-black">0</span> 
+                <span class="mx-1 text-slate-300">of</span> 
+                <span id="totalEntries" class="text-slate-800 font-black">0</span>
+            </p>
+        </div>
+    </div>
+</div>
+
+
+
+
+<div id="viewCustomerModal" class="fixed inset-0 z-[60] hidden flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" ></div>
+    <div class="relative bg-white w-full max-w-2xl rounded-[32px] shadow-2xl overflow-hidden animate__animated animate__zoomIn animate__faster">
+        <div class="p-8 bg-slate-50 border-b border-slate-100 flex justify-between items-center">
+            <div class="flex items-center gap-4">
+                <div id="view-avatar" class="w-16 h-16 rounded-2xl bg-emerald-600 text-white flex items-center justify-center font-black text-2xl shadow-lg shadow-emerald-200"></div>
+                <div>
+                    <h3 id="view-name" class="text-xl font-black text-slate-800 tracking-tight"></h3>
+                    <span id="view-email" class="text-xs text-slate-400 font-medium"></span>
+                </div>
+            </div>
+            <button onclick="closeViewModal()" class="w-10 h-10 rounded-xl bg-white border border-slate-200 text-slate-400 hover:text-slate-600 transition-colors flex items-center justify-center">
+                <i class="fas fa-times"></i>
+            </button>
+
+            
+        </div>
+
+        <div class="p-8 space-y-8 max-h-[70vh] overflow-y-auto">
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-6">
+                <div class="space-y-1">
+                    <p class="text-[9px] text-slate-400 font-black uppercase tracking-[0.1em]">Mobile Number</p>
+                    <p id="view-mobile" class="text-sm font-bold text-slate-700"></p>
+                </div>
+                <div class="space-y-1">
+                    <p class="text-[9px] text-slate-400 font-black uppercase tracking-[0.1em]">Gender</p>
+                    <p id="view-gender" class="text-sm font-bold text-slate-700"></p>
+                </div>
+                <div class="space-y-1">
+                    <p class="text-[9px] text-slate-400 font-black uppercase tracking-[0.1em]">Date of Birth</p>
+                    <p id="view-dob" class="text-sm font-bold text-slate-700"></p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6 border-t border-slate-100">
+                <div class="space-y-1">
+                    <p class="text-[9px] text-slate-400 font-black uppercase tracking-[0.1em]">City</p>
+                    <p id="view-city" class="text-sm font-semibold text-slate-700"></p>
+                </div>
+                <div class="space-y-1">
+                    <p class="text-[9px] text-slate-400 font-black uppercase tracking-[0.1em]">Residential Address</p>
+                    <p id="view-address" class="text-sm font-semibold text-slate-600 leading-relaxed"></p>
+                </div>
+            </div>
+
+            <div class="pt-6 border-t border-slate-100">
+                <p class="text-[10px] text-slate-400 font-black uppercase tracking-[0.2em] mb-4">Verification Documents</p>
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100 text-center space-y-2">
+                        <i class="fas fa-id-card text-emerald-500 text-xl"></i>
+                        <p class="text-[8px] font-black text-slate-500 uppercase">Aadhar Card</p>
+                        <button onclick="openImageModal('aadhar')" class="w-full py-1.5 bg-white border border-slate-200 rounded-lg text-[8px] font-black uppercase hover:bg-emerald-500 hover:text-white transition-all">View</button>
+                    </div>
+                    <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100 text-center space-y-2">
+                        <i class="fas fa-credit-card text-orange-500 text-xl"></i>
+                        <p class="text-[8px] font-black text-slate-500 uppercase">PAN Card</p>
+                        <button onclick="openImageModal('pan')" class="w-full py-1.5 bg-white border border-slate-200 rounded-lg text-[8px] font-black uppercase hover:bg-orange-500 hover:text-white transition-all">View</button>
+                    </div>
+                    <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100 text-center space-y-2">
+                        <i class="fas fa-passport text-blue-500 text-xl"></i>
+                        <p class="text-[8px] font-black text-slate-500 uppercase">Passport</p>
+                        <button onclick="openImageModal('passport')" class="w-full py-1.5 bg-white border border-slate-200 rounded-lg text-[8px] font-black uppercase hover:bg-blue-500 hover:text-white transition-all">View</button>
+                    </div>
+                    <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100 text-center space-y-2">
+                        <i class="fas fa-bolt text-amber-500 text-xl"></i>
+                        <p class="text-[8px] font-black text-slate-500 uppercase">Utility Bill</p>
+                        <button onclick="openImageModal('utility')" class="w-full py-1.5 bg-white border border-slate-200 rounded-lg text-[8px] font-black uppercase hover:bg-amber-500 hover:text-white transition-all">View</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<div id="editCustomerModal" class="fixed inset-0 z-[110] hidden flex items-center justify-center p-0 md:p-4">
+    <div class="absolute inset-0 bg-slate-900/90 backdrop-blur-sm animate__animated animate__fadeIn animate__faster" ></div>
+    
+    <div class="relative bg-white w-full h-full md:h-auto md:max-w-3xl md:rounded-[3rem] shadow-2xl overflow-hidden animate__animated animate__zoomIn animate__faster flex flex-col">
+        
+        <div class="bg-slate-900 px-6 py-5 md:px-8 md:py-6 text-white flex justify-between items-center shrink-0 relative overflow-hidden">
+            <div class="absolute -right-10 -top-10 w-32 h-32 bg-blue-500/20 rounded-full blur-3xl"></div>
+            <div class="relative z-10 flex items-center gap-3 md:gap-4">
+                <div class="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-blue-600 flex items-center justify-center shadow-lg shadow-blue-900/40">
+                    <i class="fas fa-user-pen text-base md:text-lg text-white"></i>
+                </div>
+                <div>
+                    <h2 class="text-lg md:text-xl font-black tracking-tight leading-none">Edit Record</h2>
+                    <p class="text-slate-400 text-[9px] md:text-[10px] font-bold uppercase tracking-widest mt-1">Update information</p>
+                </div>
+            </div>
+            <button onclick="closeEditModal()" class="relative z-50 w-10 h-10 rounded-xl bg-white/5 hover:bg-rose-500/20 hover:text-rose-500 text-slate-400 border border-white/10 transition-all flex items-center justify-center group">
+                <i class="fas fa-times transition-transform group-hover:rotate-90"></i>
+            </button>
+        </div>
+
+        <div class="flex-1 overflow-y-auto p-6 md:p-8 custom-scrollbar">
+            <form id="editCustomerForm" onsubmit="updateCustomer(event)" class="space-y-5 pb-20 md:pb-0">
+                <input type="hidden" id="edit_customer_id">
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div class="group">
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2 block mb-1.5 group-focus-within:text-blue-500 transition-colors">Full Name</label>
+                        <input type="text" id="edit_name" 
+                        onKeyPress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode==32)"
+                        pattern="[A-Z a-z ]{2,}"
+
+                        required class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold text-slate-700 focus:outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-500 transition-all">
+                    </div>
+                    <div class="group">
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2 block mb-1.5 group-focus-within:text-blue-500 transition-colors">Mobile Number</label>
+                        <input type="tel" id="edit_mobile" 
+                        pattern="[6-9][0-9]{9}" 
+                        title="Phone number must be 10 digits and start with 6, 7, 8, or 9"
+                        maxlength="10" 
+                        placeholder="9876543210"
+                        onkeypress="return (event.charCode >= 48 && event.charCode <= 57)"
+
+                        required class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold text-slate-700 focus:outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-500 transition-all">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div class="group">
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2 block mb-1.5 group-focus-within:text-blue-500 transition-colors">Email Address</label>
+                        <input type="email" id="edit_email" required class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold text-slate-700 focus:outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-500 transition-all">
+                    </div>
+                    <div class="group">
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2 block mb-1.5 group-focus-within:text-blue-500 transition-colors">Date of Birth</label>
+                        <input type="date" id="edit_dob" 
+                        onfocus="this.max = new Date(new Date().setFullYear(new Date().getFullYear() - 18)).toISOString().split('T')[0]"
+                        required class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold text-slate-700 focus:outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-500 transition-all">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div class="group">
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2 block mb-1.5 group-focus-within:text-blue-500 transition-colors">Gender</label>
+                        <div class="relative">
+                            <select id="edit_gender" class="w-full appearance-none px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold text-slate-700 focus:outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-500 transition-all">
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                              
+                            </select>
+                            <i class="fas fa-chevron-down absolute right-5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-xs"></i>
+                        </div>
+                    </div>
+                    <div class="group">
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2 block mb-1.5 group-focus-within:text-blue-500 transition-colors">City</label>
+                        <input type="text" id="edit_city"
+                        onKeyPress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode==32)"
+                        pattern="[A-Z a-z ]{2,}"
+
+                         required class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold text-slate-700 focus:outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-500 transition-all">
+                    </div>
+                </div>
+
+                <div class="group">
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2 block mb-1.5 group-focus-within:text-blue-500 transition-colors">Residential Address</label>
+                    <textarea id="edit_address" 
+                    onKeyPress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode >= 48 && event.charCode <= 57) || [32, 44, 45, 46, 47].includes(event.charCode)"
+                    pattern="[A-Za-z0-9\s,\-\.\/]{5,}"
+
+                    required rows="3" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold text-slate-700 focus:outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-500 transition-all resize-none"></textarea>
+                </div>
+            </form>
+        </div>
+
+        <div class="p-4 md:p-8 bg-white border-t border-slate-100 sticky bottom-0 z-20 shrink-0">
+            <button type="submit" form="editCustomerForm" id="btn_save_customer" class="w-full py-4 bg-blue-600 hover:bg-slate-900 text-white rounded-[1.5rem] text-[11px] font-black uppercase tracking-[0.2em] transition-all shadow-xl shadow-blue-200 active:scale-95 flex items-center justify-center gap-3">
+                <i class="fas fa-check-circle text-sm"></i> Save Changes
+            </button>
+        </div>
+    </div>
+</div>
+
+
+<div id="updateDocModal" class="fixed inset-0 z-[120] hidden flex items-center justify-center p-0 md:p-4">
+    <div class="absolute inset-0 bg-slate-900/90 backdrop-blur-sm animate__animated animate__fadeIn animate__faster"></div>
+    
+    <div class="relative bg-white w-full h-full md:h-auto max-h-screen md:max-w-4xl md:rounded-[3rem] shadow-2xl overflow-y-auto md:overflow-hidden animate__animated animate__zoomIn animate__faster">
+        
+        <div class="bg-slate-900 px-6 py-5 md:px-8 md:py-6 text-white flex justify-between items-center sticky top-0 z-30">
+            <div class="flex items-center gap-4">
+                <div class="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-emerald-500 flex items-center justify-center shadow-lg shadow-emerald-900/40">
+                    <i class="fas fa-file-shield text-base md:text-lg text-white"></i>
+                </div>
+                <div>
+                    <h2 class="text-lg md:text-xl font-black tracking-tight leading-none">Security Documents</h2>
+                    <p class="text-slate-400 text-[9px] md:text-[10px] font-bold uppercase tracking-widest mt-1">Update KYC and verification files</p>
+                </div>
+            </div>
+            <button onclick="closeDocModal()" class="w-10 h-10 rounded-xl bg-white/5 hover:bg-rose-500/20 hover:text-rose-500 text-slate-400 border border-white/10 transition-all flex items-center justify-center group">
+                <i class="fas fa-times transition-transform group-hover:rotate-90"></i>
+            </button>
+        </div>
+
+        <form id="updateDocForm" onsubmit="submitDocuments(event)" class="p-6 md:p-8 space-y-6 md:space-y-8">
+            <input type="hidden" id="doc_customer_id">
+            
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+                <div class="relative group py-8 md:py-12 px-4 md:px-6 border-2 border-dashed border-slate-100 rounded-[2rem] md:rounded-[2.5rem] hover:border-emerald-500 transition-all text-center flex flex-col items-center">
+                    <input type="file" required name="aadhar_card_photo" class="absolute inset-0 opacity-0 cursor-pointer z-20" accept="image/*">
+                    <div class="preview-box w-12 h-12 md:w-14 md:h-14 bg-white rounded-2xl shadow-md flex items-center justify-center mb-4 group-hover:scale-110 transition-all overflow-hidden flex-shrink-0">
+                        <i class="fas fa-id-card text-lg md:text-xl text-emerald-500"></i>
+                    </div>
+                    <p class="text-[10px] md:text-[11px] font-black text-slate-800 uppercase tracking-wider min-h-[30px] md:min-h-[40px] flex flex-col items-center justify-center">Aadhar Card</p>
+                </div>
+
+                <div class="relative group py-8 md:py-12 px-4 md:px-6 border-2 border-dashed border-slate-100 rounded-[2rem] md:rounded-[2.5rem] hover:border-orange-500 transition-all text-center flex flex-col items-center">
+                    <input type="file" required name="pan_card_photo" class="absolute inset-0 opacity-0 cursor-pointer z-20" accept="image/*">
+                    <div class="preview-box w-12 h-12 md:w-14 md:h-14 bg-white rounded-2xl shadow-md flex items-center justify-center mb-4 group-hover:scale-110 transition-all overflow-hidden flex-shrink-0">
+                        <i class="fas fa-credit-card text-lg md:text-xl text-orange-500"></i>
+                    </div>
+                    <p class="text-[10px] md:text-[11px] font-black text-slate-800 uppercase tracking-wider min-h-[30px] md:min-h-[40px] flex flex-col items-center justify-center">PAN Card</p>
+                </div>
+
+                <div class="relative group py-8 md:py-12 px-4 md:px-6 border-2 border-dashed border-slate-100 rounded-[2rem] md:rounded-[2.5rem] hover:border-blue-500 transition-all text-center flex flex-col items-center">
+                    <input type="file" required name="passport_photo" class="absolute inset-0 opacity-0 cursor-pointer z-20" accept="image/*">
+                    <div class="preview-box w-12 h-12 md:w-14 md:h-14 bg-white rounded-2xl shadow-md flex items-center justify-center mb-4 group-hover:scale-110 transition-all overflow-hidden flex-shrink-0">
+                        <i class="fas fa-passport text-lg md:text-xl text-blue-500"></i>
+                    </div>
+                    <p class="text-[10px] md:text-[11px] font-black text-slate-800 uppercase tracking-wider min-h-[30px] md:min-h-[40px] flex flex-col items-center justify-center">Passport Photo</p>
+                </div>
+
+                <div class="relative group py-8 md:py-12 px-4 md:px-6 border-2 border-dashed border-slate-100 rounded-[2rem] md:rounded-[2.5rem] hover:border-amber-500 transition-all text-center flex flex-col items-center">
+                    <input type="file" required name="light_bill_photo" class="absolute inset-0 opacity-0 cursor-pointer z-20" accept="image/*">
+                    <div class="preview-box w-12 h-12 md:w-14 md:h-14 bg-white rounded-2xl shadow-md flex items-center justify-center mb-4 group-hover:scale-110 transition-all overflow-hidden flex-shrink-0">
+                        <i class="fas fa-bolt text-lg md:text-xl text-amber-500"></i>
+                    </div>
+                    <p class="text-[10px] md:text-[11px] font-black text-slate-800 uppercase tracking-wider min-h-[30px] md:min-h-[40px] flex flex-col items-center justify-center">Utility Bill</p>
+                </div>
+            </div>
+
+            <div class="flex flex-col md:flex-row justify-end gap-3 pt-4 pb-8 md:pb-0 sticky bottom-0 bg-white">
+                <button type="button" onclick="closeDocModal()" class="md:hidden w-full px-10 py-4 bg-slate-100 text-slate-500 rounded-[1.5rem] font-black uppercase text-[10px] tracking-widest transition-all active:scale-95">
+                    Cancel & Close
+                </button>
+                
+                <button type="submit" id="btn_save_docs" class="w-full md:w-auto px-10 md:px-12 py-4 md:py-5 bg-slate-900 hover:bg-emerald-600 text-white rounded-[1.5rem] md:rounded-[2rem] font-black uppercase text-[10px] md:text-xs tracking-[0.2em] shadow-2xl transition-all active:scale-95 flex items-center justify-center gap-4">
+                    Update Documents
+                    <i class="fas fa-cloud-arrow-up text-sm"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<div id="imagePreviewModal" class="fixed inset-0 z-[100] hidden">
+    <div class="absolute inset-0 bg-slate-900/95 backdrop-blur-md animate__animated animate__fadeIn animate__faster"></div>
+    
+    <div class="absolute top-6 right-6 z-[120] flex items-center space-x-3">
+        <div class="flex items-center bg-slate-800/80 backdrop-blur-xl rounded-2xl p-1.5 border border-white/10 shadow-2xl">
+            <button onclick="adjustZoom(-0.2)" class="w-10 h-10 rounded-xl hover:bg-white/10 flex items-center justify-center transition-all group">
+                <i class="fas fa-magnifying-glass-minus text-slate-400 group-hover:text-white"></i>
+            </button>
+            
+            <div class="px-2 min-w-[55px] text-center border-x border-white/5 mx-1">
+                <span id="zoomPercent" class="text-[10px] font-black text-blue-400 tracking-tighter">100%</span>
+            </div>
+
+            <button onclick="resetZoom()" class="px-3 h-10 rounded-xl hover:bg-white/10 flex items-center justify-center text-[9px] font-black uppercase transition-all text-slate-300 hover:text-white">
+                Reset
+            </button>
+            
+            <button onclick="adjustZoom(0.2)" class="w-10 h-10 rounded-xl hover:bg-white/10 flex items-center justify-center transition-all group">
+                <i class="fas fa-magnifying-glass-plus text-slate-400 group-hover:text-white"></i>
+            </button>
+        </div>
+
+        <button onclick="closeImageModal()" class="w-12 h-12 rounded-2xl bg-red-500/20 text-red-400 border border-red-500/20 flex items-center justify-center hover:bg-red-500 hover:text-white shadow-xl active:scale-90 transition-all">
+            <i class="fas fa-times text-lg"></i>
+        </button>
+    </div>
+
+    <div class="absolute inset-0 z-[110] flex items-center justify-center p-8 overflow-auto sidebar-scroll">
+        <div id="zoomWrapper" class="transition-transform duration-300 ease-out flex flex-col items-center justify-center origin-center">
+            
+            <div class="mb-6 text-center">
+                <span id="modalImageTitle" class="px-4 py-1.5 bg-white/5 border border-white/5 rounded-full text-[9px] font-black text-white/30 uppercase tracking-[0.2em]">
+                    DOCUMENT PREVIEW
+                </span>
+            </div>
+
+            <img id="previewImg" 
+                 src="" 
+                 alt="Zoomed Doc" 
+                 class="max-h-[80vh] w-auto rounded-2xl shadow-2xl border border-white/5 bg-slate-800/50 object-contain block">
+        </div>
+    </div>
+</div>
+
+
+
+
+<script src="{{ url_for('static', filename='staffPanel/js/customerDesk/register_customer_view.js') }}"></script>
+{% endblock content %}

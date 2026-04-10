@@ -1,0 +1,124 @@
+{% extends "adminPanel/base.html" %}
+
+{% block title %}Site Settings{% endblock title %}
+
+{% block content %}
+<div class="min-h-screen bg-slate-50/50 p-4 lg:p-8 transition-all duration-400">
+    <header class="mb-10 animate__animated animate__fadeIn">
+        <h1 class="text-3xl font-black text-slate-900 tracking-tight">Site Configuration</h1>
+        <p class="text-slate-500 font-medium mt-1">Manage global system preferences and contact information.</p>
+    </header>
+
+    <div class="space-y-8 max-w-6xl mx-auto">
+        
+        <div class="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-200/50">
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center space-x-4">
+                    <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
+                        <i class="fas fa-hammer text-lg"></i>
+                    </div>
+                    <h2 class="text-xl font-black text-slate-800">Maintenance Control</h2>
+                </div>
+                <span id="maintenance-status" class="px-4 py-1.5 rounded-full bg-emerald-100 text-emerald-600 text-[10px] font-black uppercase tracking-wider">System Live</span>
+            </div>
+            
+            <div class="flex items-center justify-between p-6 bg-slate-50 rounded-3xl border border-slate-100">
+                <div class="max-w-md">
+                    <p class="font-bold text-slate-900 leading-tight">Toggle Maintenance Mode</p>
+                    <p class="text-xs text-slate-500 mt-1">Activating this will redirect all public traffic to a "Under Maintenance" landing page. Admin panel remains accessible.</p>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" id="maintenance-toggle" class="sr-only peer" onchange="updateMaintenanceMode(this)">
+                    <div class="w-16 h-8 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[4px] after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-amber-500"></div>
+                </label>
+            </div>
+        </div>
+
+        <form id="settings-form" onsubmit="updateGeneralSettings(event)" class="space-y-8">
+            
+            <div class="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-200/50">
+                <div class="flex items-center space-x-4 mb-8">
+                    <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+                        <i class="fas fa-address-book text-lg"></i>
+                    </div>
+                    <h2 class="text-xl font-black text-slate-800">Official Contact Details</h2>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                   <div class="space-y-2">
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Contact Number</label>
+                        <div class="relative">
+                            <span class="absolute left-5 top-1/2 -translate-y-1/2 font-bold text-slate-400 text-sm border-r border-slate-200 pr-3">+91</span>
+                            
+                            <input type="text" 
+                                name="phone" 
+                                placeholder="00000 00000" 
+                                maxlength="10" 
+                                pattern="[6-9][0-9]{9}"
+                                onkeypress="return event.charCode >= 48 && event.charCode <= 57;"
+                                class="w-full pl-16 pr-5 py-4 rounded-2xl bg-slate-50 border border-slate-100 outline-none font-semibold text-slate-700 focus:ring-4 focus:ring-blue-500/5 transition-all"
+                                required>
+                        </div>
+                        <p class="text-[9px] text-slate-400 ml-1 italic">Enter 10 digits starting with 6-9 (e.g., 9876543210)</p>
+                    </div>
+                    
+                    <div class="space-y-2">
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Official Email</label>
+                        <input type="email" name="email" placeholder="admin@domain.com" class="w-full px-5 py-4 rounded-2xl bg-slate-50 border border-slate-100 outline-none font-semibold text-slate-700 focus:ring-4 focus:ring-blue-500/5 transition-all">
+                    </div>
+                    <div class="md:col-span-2 space-y-2">
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Company Address</label>
+                        <textarea name="address" rows="2" placeholder="Full office address..." class="w-full px-5 py-4 rounded-2xl bg-slate-50 border border-slate-100 outline-none font-semibold text-slate-700 focus:ring-4 focus:ring-blue-500/5 transition-all"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-200/50">
+                <div class="flex items-center space-x-4 mb-8">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                        <i class="fas fa-share-nodes text-lg"></i>
+                    </div>
+                    <h2 class="text-xl font-black text-slate-800">Social Links & Location</h2>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+                    <div class="space-y-4">
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest"><i class="fab fa-facebook mr-2 text-blue-600"></i> Facebook URL</label>
+                            <input type="url" name="fb" class="w-full px-5 py-3.5 rounded-xl bg-slate-50 border border-slate-100 outline-none">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest"><i class="fab fa-instagram mr-2 text-pink-500"></i> Instagram URL</label>
+                            <input type="url" name="ig" class="w-full px-5 py-3.5 rounded-xl bg-slate-50 border border-slate-100 outline-none">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest"><i class="fab fa-linkedin mr-2 text-blue-700"></i> LinkedIn URL</label>
+                            <input type="url" name="li" class="w-full px-5 py-3.5 rounded-xl bg-slate-50 border border-slate-100 outline-none">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest"><i class="fas fa-link mr-2 text-red-500"></i> Google Map URL</label>
+                            <input type="text" id="map-input" name="map_url" placeholder="Paste embed URL here..." class="w-full px-5 py-3.5 rounded-xl bg-slate-50 border border-slate-100 outline-none" oninput="liveUpdateMap(this.value)">
+                        </div>
+                    </div>
+                    <div class="h-full flex flex-col">
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Live Map Preview</label>
+                        <div class="flex-grow min-h-[300px] bg-slate-100 rounded-[2.5rem] overflow-hidden border-4 border-white shadow-inner relative">
+                            <div id="map-placeholder" class="absolute inset-0 flex flex-col items-center justify-center text-slate-400 p-6 text-center">
+                                <i class="fas fa-map-marked-alt text-4xl mb-3 opacity-20"></i>
+                                <p class="text-[10px] font-bold uppercase tracking-widest">Valid Google Map URL Required</p>
+                            </div>
+                            <iframe id="map-frame" class="w-full h-full hidden border-0" allowfullscreen="" loading="lazy"></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-end pt-4">
+                <button type="submit" id="main-save-btn" class="px-12 py-4 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-black shadow-2xl shadow-blue-500/30 transition-all active:scale-95">
+                    Save Site Changes
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="{{ url_for('static',filename='adminPanel/js/site_settings.js')}}"></script>
+{% endblock %}

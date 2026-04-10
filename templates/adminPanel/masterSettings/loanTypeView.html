@@ -1,0 +1,102 @@
+{% extends "adminPanel/base.html" %}
+
+{% block title %}FinTrack | Admin: Loan Type Master{% endblock title %}
+
+{% block content %}
+<div class="space-y-12 animate__animated animate__fadeInUp animate__faster pb-20">
+    
+    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 border-b border-slate-100 pb-8 items-center lg:items-start text-center lg:text-left animate__animated animate__fadeInDown">
+    <div class="space-y-1">
+        <h1 class="text-3xl font-black text-slate-800 tracking-tight flex flex-col lg:flex-row items-center lg:items-start">
+            <i class="fas fa-layer-group text-blue-600 lg:mr-4 mb-3 lg:mb-0 text-2xl"></i>
+            Loan Type Master
+        </h1>
+        <p class="text-sm text-slate-400 font-medium">Global administration and portfolio categorization hub</p>
+    </div>
+    
+    <div class="flex items-center space-x-3 px-6 py-3 bg-slate-900 rounded-[1.5rem] shadow-xl shadow-slate-200">
+        <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+        <span class="text-[10px] font-black text-white uppercase tracking-[0.2em]">Auth: System Administrator</span>
+    </div>
+</div>
+
+
+<div class="fixed top-0 right-0 -z-10 opacity-[0.03] pointer-events-none">
+    <i class="fas fa-microchip text-[40rem] text-slate-900 rotate-12"></i>
+</div>
+    
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-10 max-w-6xl mx-auto">
+    {% for loan in loan_types %}
+    <div class="relative bg-white p-12 rounded-[3.5rem] border border-slate-100 shadow-sm flex flex-col items-center justify-center space-y-8 group transition-all duration-500 hover:shadow-[0_20px_50px_rgba(0,0,0,0.05)] hover:-translate-y-2 overflow-hidden">
+        
+        <div class="absolute -inset-1 {% if 'Gold' in loan.name %}bg-gradient-to-r from-amber-400 to-yellow-500{% else %}bg-gradient-to-r from-blue-500 to-indigo-500{% endif %} rounded-[3.5rem] blur opacity-0 group-hover:opacity-10 transition duration-1000 group-hover:duration-200"></div>
+
+        <div class="absolute top-8 left-8 px-3 py-1 rounded-lg text-[8px] font-black uppercase tracking-widest border z-10
+            {% if 'Gold' in loan.name %}bg-amber-50 text-amber-600 border-amber-100{% else %}bg-blue-50 text-blue-600 border-blue-100{% endif %}">
+            Type: {{ loan.category_type }}
+        </div>
+        
+        <div class="relative w-32 h-32 rounded-[2.5rem] flex items-center justify-center text-5xl shadow-inner transition-all duration-500 z-10
+            {% if 'Gold' in loan.name %}bg-amber-50 text-amber-600 group-hover:bg-amber-600 group-hover:text-white
+            {% else %}bg-blue-50 text-blue-600 group-hover:bg-blue-600 group-hover:text-white{% endif %}">
+            <i class="{{ loan.icon }} group-hover:scale-110 transition-transform duration-500"></i>
+        </div>
+
+        <div class="text-center relative z-10">
+            <h3 class="text-2xl font-black text-slate-800 uppercase tracking-tighter">{{ loan.name }}</h3>
+            <div class="mt-4 flex justify-center space-x-1 opacity-20 group-hover:opacity-100 transition-opacity duration-500">
+                <div class="h-1 w-8 rounded-full {% if 'Gold' in loan.name %}bg-amber-500{% else %}bg-blue-500{% endif %}"></div>
+                <div class="h-1 w-2 rounded-full {% if 'Gold' in loan.name %}bg-amber-300{% else %}bg-blue-300{% endif %}"></div>
+                <div class="h-1 w-1 rounded-full {% if 'Gold' in loan.name %}bg-amber-200{% else %}bg-blue-200{% endif %}"></div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+
+
+    
+    <div class="max-w-6xl mx-auto">
+        <div class="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden">
+            <div class="bg-slate-50 px-10 py-5 border-b border-slate-100 flex items-center justify-between">
+                <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Administrative General Information</h4>
+                <i class="fas fa-lock text-slate-300 text-xs"></i>
+            </div>
+            <div class="p-10 grid grid-cols-1 md:grid-cols-3 gap-12">
+                <div class="space-y-4">
+                    <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center"><i class="fas fa-database text-xs"></i></div>
+                    <h5 class="text-xs font-black text-slate-800 uppercase tracking-wide">Category Management</h5>
+                    <p class="text-[11px] text-slate-500 leading-relaxed">System allows only authorized loan types to be visible. New categories require structural database migrations handled by the backend team.</p>
+                </div>
+                <div class="space-y-4">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center"><i class="fas fa-file-contract text-xs"></i></div>
+                    <h5 class="text-xs font-black text-slate-800 uppercase tracking-wide">Protocol Compliance</h5>
+                    <p class="text-[11px] text-slate-500 leading-relaxed">Both portfolios are governed by active interest rate policies. Changes to base rates must be performed through the specific Master Settings pages.</p>
+                </div>
+                <div class="space-y-4">
+                    <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center"><i class="fas fa-fingerprint text-xs"></i></div>
+                    <h5 class="text-xs font-black text-slate-800 uppercase tracking-wide">Integrity Audit</h5>
+                    <p class="text-[11px] text-slate-500 leading-relaxed">Current view is restricted to 'Read-Only' to maintain system stability. All administrative access is timestamped and logged for audit compliance.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="flex justify-center">
+        <div class="bg-white px-8 py-4 rounded-full border border-slate-100 shadow-sm flex items-center space-x-6">
+            <div class="flex items-center space-x-2">
+                <span class="text-[8px] font-black text-slate-300 uppercase tracking-widest">Server Status:</span>
+                <span class="text-[10px] font-black text-emerald-500 uppercase">Optimal</span>
+            </div>
+            <div class="h-4 w-[1px] bg-slate-100"></div>
+            <p class="text-[9px] text-slate-400 font-bold uppercase tracking-[0.2em] leading-none">
+                FinTrack Central Admin Dashboard • 2026 Internal Release
+            </p>
+        </div>
+    </div>
+</div>
+
+
+{% endblock content %}

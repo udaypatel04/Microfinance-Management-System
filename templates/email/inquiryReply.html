@@ -1,0 +1,32 @@
+{% extends "email/baseEmail.html" %}
+
+{% block email_content %}
+    <div style="margin-bottom: 24px; sm:margin-bottom: 28px;">
+        <span style="display: inline-block; background-color: #f0f7ff; color: #2563eb; padding: 6px 12px; border-radius: 10px; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; border: 1px solid #e0f0ff;">
+            Inquiry Answered
+        </span>
+    </div>
+
+    <h2 style="margin: 0 0 12px 0; font-size: 20px; sm:font-size: 24px; font-weight: 800; color: #0f172a; letter-spacing: -0.5px; line-height: 1.2;">
+        Hi {{ name }},
+    </h2>
+    
+    <p style="margin: 0 0 24px 0; font-size: 15px; sm:font-size: 16px; color: #64748b; line-height: 1.6;">
+        Thank you for your patience. Our support team has reviewed your inquiry and provided the following response:
+    </p>
+
+    <div style="background-color: #f8fafc; padding: 20px; sm:padding: 28px; border-radius: 20px; border: 1px solid #f1f5f9; margin-bottom: 24px; sm:margin-bottom: 32px;">
+        <p style="margin: 0; font-size: 14px; sm:font-size: 15px; font-weight: 500; color: #334155; font-style: italic; line-height: 1.7;">
+            "{{ message }}"
+        </p>
+    </div>
+
+    <div style="padding-top: 12px; border-top: 1px solid #f8fafc;">
+        <p style="margin: 0; font-size: 13px; color: #94a3b8;">
+            Best regards,
+        </p>
+        <p style="margin: 4px 0 0 0; font-size: 15px; sm:font-size: 16px; font-weight: 800; color: #1e293b;">
+            FinTrack Support Team
+        </p>
+    </div>
+{% endblock %}

@@ -1,0 +1,254 @@
+{% extends "userPanel/base.html" %}
+
+{% block title %}Gold Loan Apply{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-1 flex items-center justify-center min-h-[85vh]"> 
+    <div class="max-w-6xl w-full bg-white rounded-[2.5rem] shadow-2xl overflow-hidden border border-slate-100 animate__animated animate__fadeIn">
+        <div class="grid grid-cols-1 lg:grid-cols-12"> 
+            
+            <div class="lg:col-span-5 p-6 md:p-10 border-r border-slate-50 bg-white"> 
+                <div class="flex items-center gap-4 mb-6"> 
+                    <div class="w-11 h-11 bg-amber-500 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-amber-200">
+                        <i class="fas fa-coins text-lg"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-black uppercase tracking-[0.15em] text-slate-800 leading-none">Gold Loan Apply</h2>
+                        <p class="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-1.5">Adjust parameters for a quote</p>
+                    </div>
+                </div>
+
+                <form id="gold-loan-form" class="space-y-3"> 
+                    <div class="grid grid-cols-2 gap-5">
+                        <div class="group">
+                            <div class="flex justify-between items-center mb-1.5 ml-1">
+                                <label class="block text-[9px] font-black text-slate-400 uppercase tracking-widest">Asset Type</label>
+                            </div>
+                            <select id="goldType" class="w-full p-3.5 bg-slate-50 border-2 border-transparent rounded-xl text-xs font-bold text-slate-500 focus:text-slate-800 focus:border-amber-500 transition-all outline-none">
+                                {% for type in gold_types %}
+                                <option value="{{ type.id }}">{{ type.item_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Purity (Karat)</label>
+                            <select id="karat" class="w-full p-3.5 bg-slate-50 border-2 border-transparent rounded-xl text-xs font-bold focus:border-amber-500 transition-all outline-none">
+                                {% for p in purities %}
+                                    {% set percentage = (p.purity / 24 * 100) | round(1) %}
+                                    <option value="{{ p.id }}" {% if p.purity == 22 %}selected{% endif %} data-karat="{{p.purity}}">
+                                        {{ p.purity }}K ({{ percentage }}%)
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-5">
+                        <div>
+                            <label class="block text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Weight (g)</label>
+                            <input type="number" id="weight" 
+                            onkeydown="if(['e','E','+','-'].includes(event.key)) event.preventDefault();" min=1
+                            value="1" step="0.01" class="w-full p-3.5 bg-slate-50 border-none rounded-xl text-xs font-bold focus:ring-2 focus:ring-amber-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1">24K Price (1g)</label>
+                            <input type="number" id="price1g" value="{{ gram_price }}" readonly class="w-full p-3.5 bg-slate-100 border-none rounded-xl text-xs font-bold text-slate-500 cursor-not-allowed outline-none">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Annual Interest Rate (%)</label>
+                        <div class="relative">
+                            <input type="number" id="interestRate" value="{{ interest_rate }}" readonly class="w-full p-3.5 bg-slate-100 border-none rounded-xl text-xs font-bold text-slate-500 cursor-not-allowed outline-none">
+                            <span class="absolute right-5 top-3.5 text-slate-400 font-bold text-xs">%</span>
+                        </div>
+                    </div>
+
+                    <div class="space-y-5 pt-1">
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-end">
+                                <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Repayment Tenure</label>
+                                <span id="tenureVal" class="text-[10px] font-black text-amber-600 bg-amber-50 px-3 py-0.5 rounded-full border border-amber-100">12 Months</span>
+                            </div>
+                            <input type="range" id="tenure" min="3" max="24" step="3" value="12" class="w-full h-1 bg-slate-100 rounded-lg appearance-none cursor-pointer accent-amber-500">
+                        </div>
+
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-end">
+                                <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest">LTV (%)</label>
+                                <span id="ltvVal" class="text-[10px] font-black text-emerald-600 bg-emerald-50 px-3 py-0.5 rounded-full border border-emerald-100">70%</span>
+                            </div>
+                            <input type="range" id="ltv" min="65" max="75" value="70" class="w-full h-1 bg-slate-100 rounded-lg appearance-none cursor-pointer accent-emerald-500">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-5 pt-1">
+                        <div>
+                            <label class="block text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Appointment Date</label>
+                            <input type="date" id="appointmentDate" 
+                            onfocus="const d = new Date(); d.setDate(d.getDate() + 1); document.getElementById('appointmentDate').min = d.toISOString().split('T')[0]; 
+                            d.setDate(d.getDate() + 14); document.getElementById('appointmentDate').max = d.toISOString().split('T')[0];"
+                            
+                            onchange="let d=new Date(this.value); let w=Math.ceil(d.getDate()/7); if(d.getDay()===0 || (d.getDay()===6 && (w===2 || w===4))) 
+                            { showNotify('Sundays And 2nd/4th Saturdays Are Holidays.','error'); this.value=''; }"
+
+                            class="w-full p-3.5 bg-slate-50 border-none rounded-xl text-xs font-bold focus:ring-2 focus:ring-amber-500 outline-none text-slate-500">
+                        </div>
+                        <div>
+                            <label class="block text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Appt. Time</label>
+                            <div class="relative">
+                                <select id="appointmentTime" 
+                                    class="w-full p-3.5 bg-slate-50 border-none rounded-xl text-xs font-bold focus:ring-2 focus:ring-amber-500 outline-none text-slate-500 appearance-none cursor-pointer">
+                                    <option value="" disabled selected>-- : --</option>
+                                    <option value="10:00">10:00 AM</option>
+                                    <option value="10:15">10:15 AM</option>
+                                    <option value="10:30">10:30 AM</option>
+                                    <option value="10:45">10:45 AM</option>
+                                    <option value="11:00">11:00 AM</option>
+                                    <option value="11:15">11:15 AM</option>
+                                    <option value="11:30">11:30 AM</option>
+                                    <option value="11:45">11:45 AM</option>
+                                    <option value="12:00">12:00 PM</option>
+                                    <option value="12:15">12:15 PM</option>
+                                    <option value="12:30">12:30 PM</option>
+                                    <option value="12:45">12:45 PM</option>
+                                    <option value="13:00">01:00 PM</option>
+                                    <option value="13:15">01:15 PM</option>
+                                    <option value="13:30">01:30 PM</option>
+                                    <option value="13:45">01:45 PM</option>
+                                    <option value="14:00">02:00 PM</option>
+                                    <option value="14:15">02:15 PM</option>
+                                    <option value="14:30">02:30 PM</option>
+                                    <option value="14:45">02:45 PM</option>
+                                    <option value="15:00">03:00 PM</option>
+                                    <option value="15:15">03:15 PM</option>
+                                    <option value="15:30">03:30 PM</option>
+                                    <option value="15:45">03:45 PM</option>
+                                    <option value="16:00">04:00 PM</option>
+                                </select>
+                                
+                                <div class="absolute inset-y-0 right-4 flex items-center pointer-events-none">
+                                    <i class="fas fa-clock text-slate-400 text-[10px]"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="w-full mt-2 py-4 bg-slate-900 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] hover:bg-amber-500 transition-all shadow-xl active:scale-95 flex items-center justify-center gap-3">
+                        Apply Now <i class="fas fa-paper-plane text-[10px]"></i>
+                    </button>
+                </form>
+            </div>
+
+            <div class="lg:col-span-7 bg-slate-900 p-8 md:p-14 flex flex-col justify-center relative overflow-hidden text-white">
+                <div class="absolute top-0 right-0 w-64 h-64 bg-amber-500/5 rounded-full blur-[100px]"></div>
+                
+                <div id="resultsContent" class="transition-all duration-500 space-y-6 relative z-10"> 
+                    
+                    <div class="border-b border-white/10 pb-5">
+                        <p class="text-[10px] font-black text-amber-500 uppercase tracking-[0.5em] mb-1.5">Estimated Gold Value</p>
+                        <h1 id="estGoldValue" class="text-5xl font-black tracking-tighter tabular-nums text-white leading-none">₹0</h1>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center px-2">
+                            <span class="text-[11px] font-bold text-slate-400 uppercase tracking-[0.2em]">Approved Sanction</span>
+                            <span id="loanAmount" class="text-xl font-black text-slate-200 tabular-nums">₹0</span>
+                        </div>
+
+                        <div class="flex justify-between items-center px-4 text-rose-400 bg-rose-400/10 py-3 rounded-2xl border border-rose-400/20">
+                            <div class="flex flex-col">
+                                <span class="text-[11px] font-bold uppercase tracking-widest leading-none">Processing Fee</span>
+                                <span class="text-[8px] uppercase font-black text-rose-400/60 mt-1.5">(₹1,000 + 18% GST)</span>
+                            </div>
+                            <span id="totalFee" class="text-base font-black font-mono">- ₹1,180</span>
+                        </div>
+
+                        <div class="bg-gradient-to-br from-emerald-500/20 to-emerald-500/5 p-7 rounded-[2.5rem] border border-emerald-500/30 shadow-2xl group hover:scale-[1.01] transition-all duration-300">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <span class="text-[12px] font-black text-emerald-400 uppercase tracking-widest block mb-1">Final Payout Amount</span>
+                                    <span class="text-[10px] text-emerald-500/60 uppercase font-bold tracking-tighter italic">Net Cash Disbursed to Bank</span>
+                                </div>
+                                <span id="disburseAmount" class="text-4xl font-black text-emerald-400 tabular-nums drop-shadow-[0_0_20px_rgba(52,211,153,0.4)]">₹0</span>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-6 py-5 border-y border-white/10">
+                            <div class="border-r border-white/5">
+                                <span class="text-[10px] font-bold text-slate-500 uppercase block mb-1.5 tracking-widest">Monthly EMI</span>
+                                <span id="emiAmount" class="text-2xl font-black text-white tabular-nums">₹0</span>
+                            </div>
+                            <div class="text-right pl-4">
+                                <span class="text-[10px] font-bold text-slate-500 uppercase block mb-1.5 tracking-widest">Total Interest</span>
+                                <span id="totalInterest" class="text-2xl font-black text-amber-400 tabular-nums">₹0</span>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-between items-center px-2 py-1">
+                            <div class="flex flex-col">
+                                <span class="text-[11px] font-black text-slate-400 uppercase tracking-widest">Total Repayment Amount</span>
+                                <span id="repaymentLabel" class="text-[10px] text-slate-300 font-bold uppercase mt-1 tracking-tighter opacity-70 italic">--</span>
+                            </div>
+                            <div class="text-right">
+                                <span id="totalPayable" class="text-2xl font-black text-white tabular-nums border-b-4 border-amber-500/40 pb-1">₹0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div id="interest-popup" 
+     class="invisible fixed top-6 left-1/2 -translate-x-1/2 z-[100] transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)] transform -translate-y-20 opacity-0 scale-95">
+    
+    <div class="relative group cursor-default">
+        <div class="absolute -inset-1 bg-gradient-to-r from-amber-400 via-yellow-500 to-amber-600 rounded-full blur-md opacity-25 group-hover:opacity-50 transition duration-1000"></div>
+        
+        <div class="relative flex items-center bg-white/95 backdrop-blur-2xl border border-white/60 px-6 py-4 rounded-full shadow-[0_20px_50px_-12px_rgba(0,0,0,0.15)] space-x-5 min-w-[380px] md:min-w-[480px]">
+            
+            <div class="flex-shrink-0 w-12 h-12 rounded-full bg-gradient-to-br from-slate-900 to-slate-700 flex items-center justify-center shadow-inner border border-white/20">
+                <svg viewBox="0 0 24 24" class="h-6 w-6 text-amber-400" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M6 3h12M6 8h12M6 13l8.5 8M6 13h3c6 0 6-10 0-10H6" />
+                </svg>
+            </div>
+
+            <div class="flex-1 flex flex-col">
+                <div class="flex items-center space-x-2 mb-0.5">
+                    <span class="text-[9px] font-black uppercase tracking-[0.25em] text-slate-400">Yield Intelligence</span>
+                    <span class="bg-gradient-to-r from-amber-500 to-yellow-600 text-white text-[8px] px-2 py-0.5 rounded-full font-bold shadow-sm">DYNAMIC RATE</span>
+                </div>
+                
+                <div class="flex flex-col space-y-0.5">
+                    <p class="text-xs text-slate-500 font-normal">
+                        Your final Interest rate is derived from:
+                    </p>
+                    <p class="text-[13px] text-slate-800 font-semibold tracking-tight">
+                        <span class="text-indigo-600">RBI Repo Rate</span> 
+                        <span class="mx-1.5 text-slate-300">&</span> 
+                        <span class="text-emerald-600">Repayment Performance</span>
+                    </p>
+                </div>
+            </div>
+
+            <div class="flex-shrink-0 pl-2">
+                <div class="flex flex-col items-center">
+                    <span class="relative flex h-3 w-3 mb-1">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                    </span>
+                    <span class="text-[8px] font-bold text-slate-400 uppercase tracking-tighter">Live</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="{{ url_for('static', filename='userPanel/js/applyLoan/gold_loan_request.js') }}"></script>
+{% endblock %}

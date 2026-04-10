@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Receipt_{{ tx.id }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: '#0f172a',
+                        // Logic for the Accent Color (Emerald, Indigo, or Rose)
+                        accent: '{{ "#10b981" if tx.trans_type == "credit" else "#6366f1" if tx.trans_type == "revert" else "#f43f5e" }}', 
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @media print {
+            @page { size: portrait; margin: 0mm; }
+            body { 
+                background-color: white !important; 
+                -webkit-print-color-adjust: exact; 
+                print-color-adjust: exact;
+                margin: 0 !important;
+                padding: 15mm !important; 
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                min-height: 100vh !important;
+            }
+            .main-card { 
+                box-shadow: none !important; 
+                border: 1px solid #e2e8f0 !important; 
+                width: 100% !important;
+                max-width: 550px !important; 
+                margin: auto !important;
+                border-radius: 24px !important;
+            }
+            .no-print { display: none !important; }
+        }
+        #qrcode img { display: inline-block; }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-900 font-sans antialiased min-h-screen flex items-center justify-center p-6 print:p-0">
+
+    <div class="main-card w-full max-w-xl bg-white shadow-2xl rounded-[2.5rem] overflow-hidden">
+        
+        <div class="bg-brand p-8 flex justify-between items-center border-b-4 border-accent text-white">
+            <div>
+                <h1 class="text-2xl font-black tracking-tighter italic leading-none text-white">FinTrack <span class="text-accent">Wallet</span></h1>
+                <p class="text-slate-400 text-[10px] uppercase tracking-[0.3em] mt-2 font-black">Official Transaction Voucher</p>
+            </div>
+            <div class="border px-4 py-2 rounded-xl {{ 'bg-emerald-500/10 border-emerald-500/20 text-emerald-500' if tx.trans_type == 'credit' else 'bg-indigo-500/10 border-indigo-500/20 text-indigo-500' if tx.trans_type == 'revert' else 'bg-rose-500/10 border-rose-500/20 text-rose-500' }}">
+                <span class="text-[10px] font-black uppercase tracking-widest leading-none">Verified</span>
+            </div>
+        </div>
+
+        <div class="p-8 md:p-12">
+            
+            <div class="text-center mb-10 py-16 rounded-[2.5rem] border shadow-inner relative overflow-hidden {{ 'bg-emerald-50 border-emerald-100' if tx.trans_type == 'credit' else 'bg-indigo-50 border-indigo-100' if tx.trans_type == 'revert' else 'bg-rose-50 border-rose-100' }}">
+                <p class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-3">Net Amount Transacted</p>
+                <h2 class="text-6xl font-black tracking-tighter relative z-10 {{ 'text-emerald-600' if tx.trans_type == 'credit' else 'text-indigo-600' if tx.trans_type == 'revert' else 'text-rose-600' }}">
+                    <span class="text-2xl opacity-50 mr-1 italic font-light">₹</span>{{ "{:,.2f}".format(tx.amount | float) }}
+                </h2>
+                <div class="mt-6 inline-flex items-center px-5 py-2 bg-white rounded-full border border-slate-200 text-[11px] font-black uppercase tracking-widest relative z-10 shadow-sm {{ 'text-emerald-600' if tx.trans_type == 'credit' else 'text-indigo-600' if tx.trans_type == 'revert' else 'text-rose-600' }}">
+                    <i class="fas {{ 'fa-arrow-down' if tx.trans_type == 'credit' else 'fa-rotate-left' if tx.trans_type == 'revert' else 'fa-arrow-up' }} mr-2"></i> {{ tx.trans_type.upper() }} SUCCESSFUL
+                </div>
+                
+                <div class="absolute -bottom-10 -right-10 w-32 h-32 rounded-full blur-3xl {{ 'bg-emerald-500/10' if tx.trans_type == 'credit' else 'bg-indigo-500/10' if tx.trans_type == 'revert' else 'bg-rose-500/10' }}"></div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-10 mb-12">
+                <div class="space-y-8 text-left">
+                    <div>
+                        <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Account Holder</h4>
+                        <p class="text-base font-black text-brand uppercase leading-tight">{{ tx.full_name }}</p>
+                        <p class="text-[11px] text-slate-500 font-bold mt-1 lowercase">{{ tx.email }}</p>
+                        <p class="text-[10px] text-slate-400 font-medium">+91 {{ tx.phone }}</p>
+                    </div>
+                    <div>
+                        <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 text-left">Reference ID</h4>
+                        <p class="text-[11px] font-mono font-bold text-slate-600 break-all leading-relaxed text-left bg-slate-50 p-3 rounded-xl border border-slate-100">
+                            {{ tx.payment_id }}
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex flex-col items-end justify-between text-right">
+                    <div>
+                        <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 text-right">Timestamp</h4>
+                        <p class="text-base font-black text-brand leading-none text-right mb-1">{{ tx.display_date }}</p>
+                        <p class="text-[11px] text-slate-500 font-black uppercase text-right">{{ tx.display_time }}</p>
+                    </div>
+                    
+                    <div class="bg-white p-2 border border-slate-100 rounded-2xl shadow-sm">
+                        <div id="qrcode"></div>
+                        <p class="text-[8px] text-slate-400 uppercase mt-2 font-black tracking-tighter text-center">Scan to Verify</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-8 border-t-2 border-dashed border-slate-200 space-y-3">
+                <div class="flex items-center justify-between">
+                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Digital Signature</span>
+                    <span class="text-[9px] font-mono text-slate-400 tracking-tighter truncate max-w-[220px]">{{ tx.digital_signature[:40] }}...</span>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Voucher Number</span>
+                    <span class="text-[11px] font-bold text-brand uppercase tracking-tighter">
+                        #WAL-{{ "%06d" | format(tx.id) }}-{{ tx.created_at | replace('-', '') }}-{{ tx.payment_time | replace(':', '') }}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-slate-50 px-10 py-8 border-t border-slate-100 flex justify-between items-center">
+            <div class="text-[9px] text-slate-400 font-black uppercase tracking-wider leading-tight">
+                FinTrack Financial Services Pvt Ltd.<br>
+                Digitally Authenticated Voucher
+            </div>
+            <div class="text-brand font-black italic opacity-10 text-3xl tracking-tighter select-none">FinTrack</div>
+        </div>
+    </div>
+
+    <div class="no-print fixed bottom-8 left-1/2 -translate-x-1/2 flex gap-4 bg-white/90 backdrop-blur-xl p-3 rounded-2xl shadow-2xl border border-slate-200 z-50">
+        <button onclick="window.print()" class="bg-brand text-white text-[11px] font-black py-4 px-12 rounded-xl flex items-center gap-3 hover:bg-slate-800 transition-all shadow-lg shadow-slate-200">
+            <i class="fas fa-print"></i> PRINT
+        </button>
+        <button onclick="window.close()" class="bg-slate-100 text-slate-600 text-[11px] font-bold py-4 px-8 rounded-xl hover:bg-slate-200 transition-all">
+            CLOSE
+        </button>
+    </div>
+
+    <script>
+        window.addEventListener('load', function() {
+            new QRCode(document.getElementById("qrcode"), {
+                text: "http://{{tx.system_ip_address}}:5000/v/{{ tx.payment_id }}/{{ tx.digital_signature[:16] }}",
+                width: 100, 
+                height: 100,
+                colorDark : "#0f172a",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.H
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,71 @@
+{% extends "email/baseEmail.html" %}
+
+{% block email_content %}
+<div style="text-align: center; margin-bottom: 24px;">
+    {% if status == 'approved' %}
+        <div style="display: inline-block; width: 64px; height: 64px; background-color: #ecfdf5; border-radius: 20px; text-align: center; vertical-align: middle;">
+            <span style="color: #10b981; font-size: 32px; line-height: 64px; font-weight: bold;">✓</span>
+        </div>
+    {% else %}
+        <div style="display: inline-block; width: 64px; height: 64px; background-color: #fef2f2; border-radius: 20px; text-align: center; vertical-align: middle;">
+            <span style="color: #ef4444; font-size: 32px; line-height: 64px; font-weight: bold;">✕</span>
+        </div>
+    {% endif %}
+</div>
+
+<h2 style="margin: 0 0 12px 0; color: #0f172a; font-size: 20px; sm:font-size: 24px; font-weight: 800; text-align: center; letter-spacing: -0.025em; text-transform: capitalize; line-height: 1.2;">
+    Verification {{ status }}
+</h2>
+
+<p style="margin: 0 0 16px 0; color: #475569; font-size: 15px; font-weight: 500;">
+    Hello <strong>{{ user_name }}</strong>,
+</p>
+
+<p style="margin: 0 0 24px 0; color: #64748b; font-size: 14px; sm:font-size: 15px; line-height: 1.6;">
+    Your document verification request for Application 
+    <span style="font-family: ui-monospace, monospace; background-color: #f1f5f9; padding: 3px 6px; border-radius: 6px; color: #2563eb; font-weight: 700; font-size: 12px; word-break: break-all;">
+        {{ app_no }}
+    </span> has been processed.
+</p>
+
+{% if status == 'rejected' %}
+    <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 20px; padding: 20px; margin-bottom: 24px;">
+        <table width="100%" border="0" cellspacing="0" cellpadding="0">
+            <tr>
+                <td style="padding-bottom: 8px;">
+                    <span style="font-size: 10px; font-weight: 900; color: #ef4444; text-transform: uppercase; letter-spacing: 0.1em; display: block;">
+                        Action Required
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <p style="margin: 0; color: #1e293b; font-size: 13px; line-height: 1.5; font-weight: 600;">
+                        {{ reason }}
+                    </p>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <p style="margin: 0 0 28px 0; color: #94a3b8; font-size: 12px; text-align: center; font-style: italic; line-height: 1.4;">
+        Please carry your original documents to our nearest branch for staff assistance.
+    </p>
+{% else %}
+    <div style="background-color: #f0fdf4; border: 1px solid #dcfce7; border-radius: 20px; padding: 20px; margin-bottom: 28px; text-align: center;">
+        <p style="margin: 0; color: #15803d; font-size: 14px; font-weight: 700; line-height: 1.5;">
+            {{ reason }}
+        </p>
+    </div>
+{% endif %}
+
+<div style="text-align: center;">
+    <a href="{{ dashboard_url }}" style="display: inline-block; background-color: #2563eb; color: #ffffff; padding: 16px 32px; border-radius: 14px; text-decoration: none; font-weight: 800; font-size: 14px; box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.2);">
+        Go to Dashboard
+    </a>
+</div>
+
+<p style="margin: 32px 0 0 0; font-size: 11px; color: #94a3b8; text-align: center; line-height: 1.5;">
+    Best regards,<br>
+    <span style="color: #475569; font-weight: 700;">The FinTrack Team</span>
+</p>
+{% endblock %}

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Verified Payment | FinTrack</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <style>
+        @keyframes drawCheck { to { stroke-dashoffset: 0; } }
+        .checkmark-path {
+            stroke-dasharray: 100; stroke-dashoffset: 100;
+            animation: drawCheck 0.8s ease-in-out forwards; animation-delay: 0.6s;
+        }
+        .bg-pattern {
+            background-color: #f8fafc;
+            background-image: radial-gradient(#e2e8f0 0.5px, transparent 0.5px);
+            background-size: 10px 10px;
+        }
+        #successModal { backdrop-filter: blur(6px); }
+        body { overscroll-behavior-y: contain; }
+    </style>
+</head>
+<body class="bg-pattern min-h-screen flex items-center justify-center p-3 sm:p-4">
+
+    <div id="successModal" class="fixed inset-0 z-50 flex items-center justify-center p-6 bg-slate-900/70 hidden">
+        <div class="bg-white rounded-[2rem] max-w-sm w-full p-6 sm:p-8 text-center shadow-2xl animate__animated animate__zoomIn">
+            <div class="w-16 h-16 sm:w-20 sm:h-20 bg-green-100 text-green-600 rounded-full mx-auto mb-4 flex items-center justify-center">
+                <svg class="w-10 h-10 sm:w-12 sm:h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+                </svg>
+            </div>
+            <h2 class="text-xl sm:text-2xl font-black text-slate-900 mb-2">Authenticated!</h2>
+            <p class="text-slate-500 text-xs sm:text-sm mb-6 px-2">This is a verified record from the FinTrack Financial Ledger.</p>
+            <button onclick="closeModal()" class="w-full py-4 bg-slate-900 text-white rounded-2xl font-bold active:scale-95 transition-all shadow-lg">
+                View Verification
+            </button>
+        </div>
+    </div>
+
+    <div class="w-full max-w-[400px] bg-white rounded-[2rem] sm:rounded-[2.5rem] shadow-2xl overflow-hidden animate__animated animate__zoomIn">
+        
+        <div class="bg-slate-900 pt-8 pb-6 px-6 text-center relative">
+            <div class="w-14 h-14 bg-green-500 rounded-full mx-auto mb-3 flex items-center justify-center shadow-lg animate__animated animate__bounceIn">
+                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3">
+                    <path class="checkmark-path" stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
+                </svg>
+            </div>
+            <h1 class="text-white text-lg font-black uppercase tracking-widest italic">Success</h1>
+            <p class="text-green-400 text-[9px] font-bold tracking-[0.2em] uppercase">Security Verified</p>
+        </div>
+
+        <div class="p-5 sm:p-8 space-y-5">
+            
+            <div class="bg-slate-50 rounded-2xl p-4 border border-slate-100 space-y-3">
+                <div class="flex justify-between items-center gap-2">
+                    <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider shrink-0">Recipient</span>
+                    <span class="text-slate-900 font-bold text-xs truncate">
+                        {{ payment.full_name[:3] }}********
+                    </span>
+                </div>
+
+                <div class="flex justify-between items-center border-t border-slate-200 pt-3 gap-2">
+                    <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider shrink-0">Email ID</span>
+                    <span class="text-slate-900 font-bold text-[10px] font-mono truncate">
+                        {{ payment.email[:2] }}*******@{{ payment.email.split('@')[-1] }}
+                    </span>
+                </div>
+
+                <div class="flex justify-between items-center border-t border-slate-200 pt-3">
+                    <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Mobile</span>
+                    <span class="text-slate-900 font-bold text-xs">+91 ******{{ payment.phone[-4:] }}</span>
+                </div>
+            </div>
+
+            <div class="px-1 space-y-3.5">
+                <div class="flex justify-between items-center text-xs">
+                    <span class="text-slate-400 italic">Loan Category</span>
+                    <span class="font-black uppercase {{ 'text-yellow-600' if loan_type == 'Gold Loan' else 'text-blue-600' }}">
+                        {{ loan_type }}
+                    </span>
+                </div>
+                <div class="flex justify-between items-center text-xs">
+                    <span class="text-slate-400 italic">Voucher Code</span>
+                    <span class="text-slate-900 font-bold tracking-tight">{{ payment.app_no }}</span>
+                </div>
+                <div class="flex justify-between items-center text-xs">
+                    <span class="text-slate-400 italic text-[11px]">Execution Time</span>
+                    <span class="text-slate-900 font-bold text-[11px]">{{ payment.emi_date }} | {{ payment.emi_time }}</span>
+                </div>
+                <div class="flex justify-between items-center text-xs">
+                    <span class="text-slate-400 italic">Installment</span>
+                    <span class="text-slate-900 font-black">#{{ payment.installment_no }}</span>
+                </div>
+            </div>
+
+            <div class="bg-slate-900 rounded-2xl sm:rounded-3xl p-5 text-white shadow-xl animate__animated animate__fadeInUp animate__delay-1s">
+                <div class="flex justify-between items-start mb-2">
+                    <p class="text-[9px] text-slate-400 font-bold uppercase tracking-widest">Amount Cleared</p>
+                    <span class="text-[8px] font-mono bg-white/10 px-2 py-0.5 rounded">INR</span>
+                </div>
+                <p class="text-2xl sm:text-3xl font-black italic">₹{{ "{:,.2f}".format(payment.total_paid) }}</p>
+                
+                <div class="mt-4 pt-3 border-t border-white/10 space-y-2">
+                    {% if payment.wallet_id %}
+                    <div class="flex items-center justify-between">
+                        <p class="text-[8px] text-indigo-400 uppercase font-black tracking-tighter">Wallet Ref</p>
+                        <p class="text-[8px] font-mono text-slate-300">{{ payment.wallet_id }}</p>
+                    </div>
+                    {% endif %}
+                    
+                    {% if payment.razorpay_payment_id %}
+                    <div class="flex items-center justify-between">
+                        <p class="text-[8px] text-blue-400 uppercase font-black tracking-tighter">Gateway Ref</p>
+                        <p class="text-[8px] font-mono text-slate-300">{{ payment.razorpay_payment_id }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="px-6 pb-8 text-center">
+            <div class="inline-block px-3 py-1 bg-slate-50 rounded-full border border-slate-100 mb-2">
+                <p class="text-[8px] text-slate-400 font-mono tracking-tighter uppercase">
+                    Ledger Signature: {{ payment.combined_db_sig[:16] }}
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        window.onload = function() {
+            const modal = document.getElementById('successModal');
+            modal.classList.remove('hidden');
+        };
+
+        function closeModal() {
+            const modal = document.getElementById('successModal');
+            modal.classList.add('animate__fadeOut');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 500);
+        }
+    </script>
+
+</body>
+</html>

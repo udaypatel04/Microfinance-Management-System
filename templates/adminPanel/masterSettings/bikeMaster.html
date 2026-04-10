@@ -1,0 +1,285 @@
+{% extends "adminPanel/base.html" %}
+
+{% block title %}FinTrack | Bike Master{% endblock title %}
+
+{% block content %}
+<div class="space-y-6 animate__animated animate__fadeInUp animate__faster">
+    
+    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 text-center lg:text-left items-center lg:items-start animate__animated animate__fadeInDown">
+        <div>
+            <h1 class="text-2xl font-black text-slate-800 tracking-tight">Bike Master</h1>
+            <p class="text-sm text-slate-500 font-medium">Manage motorcycle inventory with standard selectors and card-based data</p>
+        </div>
+    </div>
+
+    <div class="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-1">
+        <h2 class="text-xs font-black text-blue-600 uppercase tracking-[0.2em] mb-8">Add Bike Specification</h2>
+        
+        <form id="add-bike-info-form" class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6">
+                <div class="space-y-2">
+                    <label class="text-xs font-black text-slate-500 uppercase tracking-widest ml-1">Loan Type</label>
+                    <div class="relative">
+                        <input type="text" value="Bike Loan" disabled class="w-full px-4 py-3 bg-slate-100 border border-slate-200 rounded-2xl text-sm font-bold text-slate-500 cursor-not-allowed">
+                        <div class="absolute inset-y-0 right-0 flex items-center pr-4 text-slate-400"><i class="fas fa-lock text-xs"></i></div>
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-xs font-black text-slate-500 uppercase tracking-widest ml-1">Bike Type</label>
+                    <select id="bike_type" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-semibold text-slate-700 outline-none focus:ring-2 focus:ring-blue-500/20">
+                        <option value="new">New Bike</option>
+                        <option value="old">Old Bike</option>
+                    </select>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-xs font-black text-slate-500 uppercase tracking-widest ml-1">Bike Name</label>
+                    <input type="text" required id="bike_name" 
+                    onKeyPress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode >= 48 && event.charCode <= 57) || (event.charCode == 32)"
+                    pattern="[A-Za-z0-9 ]{2,}"
+                    placeholder="Enter name" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-semibold outline-none focus:ring-2 focus:ring-blue-500/20">
+                </div>
+                <div class="space-y-2">
+                    <label class="text-xs font-black text-slate-500 uppercase tracking-widest ml-1">Company Name</label>
+                    <input type="text" required id="company_name" 
+                    onKeyPress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode==32)"
+                    pattern="[A-Z a-z ]{2,}"
+                     placeholder="Enter company" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-semibold outline-none focus:ring-2 focus:ring-blue-500/20">
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-xs font-black text-slate-500 uppercase tracking-widest ml-1">Bike Model (Year)</label>
+                    <input type="number" required id="bike_model"
+                     min="1980" 
+                     onfocus="this.max = new Date().getFullYear()"
+                     oninput="if(this.value.length > 4) this.value = this.value.slice(0, 4)"
+                     placeholder="2024" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-semibold outline-none focus:ring-2 focus:ring-blue-500/20">
+                </div>
+                <div class="space-y-2">
+                    <label class="text-xs font-black text-slate-500 uppercase tracking-widest ml-1">Engine CC</label>
+                    <input type="number"
+                    onkeydown="if(['e','E','+','-','.'].includes(event.key)) event.preventDefault();"
+                     required id="engine_cc" min=49 placeholder="CC value" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-semibold outline-none focus:ring-2 focus:ring-blue-500/20">
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-xs font-black text-slate-500 uppercase tracking-widest ml-1">Showroom Price</label>
+                    <input type="number"
+                     onkeydown="if(['e','E','+','-','.'].includes(event.key)) event.preventDefault();"
+                     oninput="if(this.value.length > 5) this.value = this.value.slice(0, 5);"
+                     required id="showroom_price" min=20000  placeholder="0.00" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-semibold outline-none focus:ring-2 focus:ring-blue-500/20">
+                </div>
+                <div class="space-y-2">
+                    <label class="text-xs font-black text-slate-500 uppercase tracking-widest ml-1">Onroad Price</label>
+                    <input type="number"
+                     onkeydown="if(['e','E','+','-','.'].includes(event.key)) event.preventDefault();" 
+                     oninput="if(this.value.length > 5) this.value = this.value.slice(0, 5);"
+                     required id="onroad_price" min=28000 placeholder="0.00" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-semibold outline-none focus:ring-2 focus:ring-blue-500/20">
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-xs font-black text-slate-500 uppercase tracking-widest ml-1">Fuel Type</label>
+                    <select id="fuel_type" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-semibold text-slate-700 outline-none focus:ring-2 focus:ring-blue-500/20">
+                        <option>Petrol</option>
+                        <option>Electric</option>
+                        <option>CNG</option>
+                        <option value="Petrol+CNG">Petrol+CNG</option>
+                    </select>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-xs font-black text-slate-500 uppercase tracking-widest ml-1">GST Rate (%)</label>
+                    <input type="number" required id="gst_rate"
+                    oninput="if(this.value.length > 2) this.value = this.value.slice(0, 2);"
+                     min=18 placeholder="18" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-black outline-none focus:ring-2 focus:ring-blue-500/20">
+                </div>
+            </div>
+
+            <div class="pt-4">
+                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white h-[52px] rounded-2xl font-bold shadow-lg shadow-blue-200 transition-all active:scale-95 flex items-center justify-center space-x-2">
+                    <i class="fas fa-plus-circle"></i><span>Add Bike Master</span>
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <div class="bg-white p-4 rounded-3xl border border-slate-100 shadow-sm transition-all focus-within:shadow-md duration-300">
+        <div class="relative group">
+            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"><i class="fas fa-search text-slate-400 group-focus-within:text-blue-500 transition-all"></i></div>
+            <input type="text" 
+              onKeyPress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode >= 48 && event.charCode <= 57) || (event.charCode == 32)"
+              pattern="[A-Za-z0-9 ]{2,}"
+            id="bikeSearch" placeholder="Search by Bike Name, Company, Model Year, or GST %..." onkeyup="filterBikeCards()" class="block w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all" placeholder="Search entries...">
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 animate__animated animate__fadeInUp animate__delay-1s" id="cardContainer">
+        </div>
+
+    <div id="pagination" class=" hidden bg-white p-6 md:px-6 rounded-[2rem] border border-slate-100 shadow-sm flex flex-col md:flex-row items-center justify-between gap-6">
+    
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4 order-1 md:order-2 w-full md:w-auto">
+            
+            <div class="flex items-center justify-center space-x-2 w-full sm:w-auto">
+                
+                <button onclick="changePage(-1)" id="prevBtn" class="h-11 w-11 rounded-xl border border-slate-100 bg-slate-50/50 text-slate-500 hover:bg-blue-50 transition-all">
+                    <i class="fas fa-chevron-left text-xs"></i>
+                </button>
+            </div>
+
+            <div id="pageIndicator" class="flex items-center justify-center space-x-2">
+                </div>
+
+            <div class="flex items-center justify-center space-x-2 w-full sm:w-auto">
+                <button onclick="changePage(1)" id="nextBtn" class="h-11 w-11 rounded-xl border border-slate-100 bg-slate-50/50 text-slate-500 hover:bg-blue-50 transition-all">
+                    <i class="fas fa-chevron-right text-xs"></i>
+                </button>
+
+            </div>
+        </div>
+
+        <div class="px-5 py-2 bg-slate-50 rounded-full border border-slate-100 order-2 md:order-1 w-fit">
+            <p class="text-[10px] text-slate-400 font-black uppercase tracking-widest leading-none">
+                Showing <span id="startRange" class="text-slate-800 font-black">0</span> - <span id="endRange" class="text-slate-800 font-black">0</span> 
+                <span class="mx-1 text-slate-300">of</span> 
+                <span id="totalEntries" class="text-slate-800 font-black">0</span>
+            </p>
+        </div>
+    </div>
+</div>
+
+
+<div id="editBikeModal" class="fixed inset-0 z-[100] hidden">
+    <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm animate__animated animate__fadeIn"></div>
+    
+    <div class="relative h-full flex items-center justify-center p-4 md:p-8 pointer-events-none">
+        <div class="bg-white w-full max-w-6xl max-h-[90vh] rounded-[2.5rem] shadow-2xl animate__animated animate__zoomIn animate__faster overflow-hidden flex flex-col pointer-events-auto">
+            
+            <div class="shrink-0 bg-white flex items-center justify-between p-5 md:p-7 border-b border-slate-50 z-10">
+                <div class="flex items-center space-x-4">
+                    <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center shadow-sm">
+                        <i class="fas fa-edit text-lg"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-base md:text-xl font-black text-slate-800 tracking-tight">Edit Specification</h3>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Update bike details & pricing</p>
+                    </div>
+                </div>
+                <button onclick="closeEditModal()" class="w-10 h-10 flex items-center justify-center rounded-full text-slate-400 hover:bg-slate-50 hover:text-slate-600 transition-all">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <form id="edit-bike-info-form" class="flex-1 overflow-y-auto custom-scrollbar p-6 md:p-10 bg-slate-50/30">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-x-10 md:gap-y-8">
+                    <input type="hidden" id="editId">
+
+                    <div class="space-y-2">
+                        <label class="text-[11px] font-black text-slate-500 uppercase ml-1 tracking-wider">Condition</label>
+                        <select id="editType" class="w-full px-6 py-4 bg-white border border-slate-200 rounded-2xl text-sm font-bold text-slate-700 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-600 transition-all cursor-pointer appearance-none">
+                            <option value="New Bike">New Bike</option>
+                            <option value="Old Bike">Old Bike</option>
+                        </select>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="text-[11px] font-black text-slate-500 uppercase ml-1 tracking-wider">Bike Name</label>
+                        <input type="text" id="editName" placeholder="e.g. Classic 350" required
+                            onKeyPress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode >= 48 && event.charCode <= 57) || (event.charCode == 32)"
+                            pattern="[A-Za-z0-9 ]{2,}"
+                            class="w-full px-6 py-4 bg-white border border-slate-200 rounded-2xl text-sm font-bold outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-600 transition-all">
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="text-[11px] font-black text-slate-500 uppercase ml-1 tracking-wider">Manufacturer</label>
+                        <input type="text" id="editCompany" placeholder="e.g. Royal Enfield" required
+                            onKeyPress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode == 32)"
+                            pattern="[A-Z a-z ]{2,}"
+                            class="w-full px-6 py-4 bg-white border border-slate-200 rounded-2xl text-sm font-bold outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-600 transition-all">
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="text-[11px] font-black text-slate-500 uppercase ml-1 tracking-wider">Model Year</label>
+                        <input type="number" id="editModel" placeholder="YYYY" required
+                            onfocus="this.max = new Date().getFullYear()"
+                            oninput="if(this.value.length > 4) this.value = this.value.slice(0, 4)"
+                            class="no-spin w-full px-6 py-4 bg-white border border-slate-200 rounded-2xl text-sm font-bold outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-600 transition-all">
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="text-[11px] font-black text-slate-500 uppercase ml-1 tracking-wider">Engine Displacement</label>
+                        <input type="number" id="editEngine"
+                         onkeydown="if(['e','E','+','-','.'].includes(event.key)) event.preventDefault();"
+                        placeholder="e.g. 349" class="w-full px-6 py-4 bg-white border border-slate-200 rounded-2xl text-sm font-bold outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-600 transition-all">
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="text-[11px] font-black text-slate-500 uppercase ml-1 tracking-wider">Fuel Type</label>
+                        <select id="editFuel" class="w-full px-6 py-4 bg-white border border-slate-200 rounded-2xl text-sm font-bold text-slate-700 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-600 transition-all appearance-none cursor-pointer">
+                            <option value="Petrol">Petrol</option>
+                            <option value="Electric">Electric</option>
+                            <option value="CNG">CNG</option>
+                            <option value="Petrol+CNG">Petrol+CNG</option>
+                        </select>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="text-[11px] font-black text-slate-500 uppercase ml-1 tracking-wider">GST Rate (%)</label>
+                        <input type="number" id="editGst" 
+                        onkeydown="if(['e','E','+','-','.'].includes(event.key)) event.preventDefault();"
+                        oninput="if(this.value.length > 2) this.value = this.value.slice(0, 2);"
+                        placeholder="18" class="no-spin w-full px-6 py-4 bg-white border border-slate-200 rounded-2xl text-sm font-bold outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-600 transition-all">
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="text-[11px] font-black text-slate-500 uppercase ml-1 tracking-wider">Showroom Price</label>
+                        <input type="number" id="editShowroom" 
+                        onkeydown="if(['e','E','+','-','.'].includes(event.key)) event.preventDefault();"
+                        oninput="if(this.value.length > 5) this.value = this.value.slice(0, 5);"
+                        placeholder="0.00" class="no-spin w-full px-6 py-4 bg-white border border-slate-200 rounded-2xl text-sm font-bold outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-600 transition-all">
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="text-[11px] font-black text-slate-500 uppercase ml-1 tracking-wider">Final On-Road Price</label>
+                        <input type="number" id="editOnroad" 
+                        onkeydown="if(['e','E','+','-','.'].includes(event.key)) event.preventDefault();"
+                        oninput="if(this.value.length > 5) this.value = this.value.slice(0, 5);"
+                        placeholder="0.00" class="no-spin w-full px-6 py-4 bg-white border border-slate-200 rounded-2xl text-sm font-bold outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-600 transition-all">
+                    </div>
+                </div>
+                <div class="h-4"></div>
+            </form>
+
+            <div class="shrink-0 bg-white p-6 md:p-8 border-t border-slate-50 z-10">
+                <div class="flex flex-col-reverse md:flex-row justify-center items-center gap-4">
+                    <button type="button" onclick="closeEditModal()" 
+                        class="w-full md:w-auto px-12 py-4 rounded-2xl border border-slate-200 text-slate-500 font-bold hover:bg-slate-50 hover:text-slate-800 active:scale-95 transition-all">
+                        Discard Changes
+                    </button>
+                    <button type="submit" form="edit-bike-info-form"
+                        class="w-full md:w-auto px-20 py-4 rounded-2xl bg-blue-600 text-white font-bold shadow-xl shadow-blue-200 hover:bg-blue-700 active:scale-95 transition-all">
+                        Update
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Thin modern scrollbar */
+    .custom-scrollbar::-webkit-scrollbar { width: 5px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #cbd5e1; }
+
+    /* Universal No-Spinner Logic */
+    .no-spin::-webkit-outer-spin-button,
+    .no-spin::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    .no-spin { -moz-appearance: textfield; }
+</style>
+
+<script src="{{ url_for('static', filename='adminPanel/js/masterSettings/bike_master.js') }}"></script>
+{% endblock content %}

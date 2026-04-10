@@ -1,0 +1,76 @@
+{% extends "adminPanel/base.html" %}
+
+{% block title %}FinTrack | Approved Loans{% endblock title %}
+
+{% block content %}
+<div class="space-y-8 animate__animated animate__fadeInUp animate__faster pb-10">
+    
+    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 items-center lg:items-start text-center lg:text-left animate__animated animate__fadeInDown">
+        <div>
+            <h1 class="text-2xl font-black text-slate-800 tracking-tight">Loan Approved</h1>
+            <p class="text-sm text-slate-500 font-medium">Directory of successfully disbursed and active loan accounts</p>
+        </div>
+        
+        <div class="flex items-center space-x-2 bg-emerald-50 border border-emerald-100 px-4 py-2 rounded-2xl">
+            <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+            <span class="text-[10px] font-black text-emerald-700 uppercase tracking-widest">System Live: All Disbursals Active</span>
+        </div>
+    </div>
+
+    <div class="bg-white p-4 rounded-3xl border border-slate-100 shadow-sm transition-all focus-within:shadow-md duration-300">
+        <div class="relative group">
+            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                <i class="fas fa-search text-slate-400 group-focus-within:text-emerald-500 transition-all"></i>
+            </div>
+            <input type="text" id="categorySearch" onkeyup="filterCategories()" 
+                   class="block w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all" 
+                   placeholder="Search approved categories (e.g. Bike, Gold)...">
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8" id="categoryContainer">
+        
+        <div onclick="navigateToApproved('bike')" class="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-500 group cursor-pointer relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-700"></div>
+            
+            <div class="flex flex-col items-center text-center space-y-6 relative z-10">
+                <div class="w-24 h-24 rounded-[2rem] bg-emerald-50 text-emerald-600 flex items-center justify-center text-4xl shadow-inner group-hover:bg-emerald-600 group-hover:text-white transition-all duration-500">
+                    <i class="fas fa-motorcycle"></i>
+                </div>
+                <div>
+                    <h3 class="text-xl font-black text-slate-800 uppercase tracking-tight">Bike Loan</h3>
+                    <p class="text-[10px] text-emerald-500 font-black uppercase mt-2 tracking-[0.2em]">Disbursed Records</p>
+                </div>
+                <div class="w-full pt-4 border-t border-slate-50 flex items-center justify-center text-emerald-600 font-black text-[10px] uppercase tracking-[0.2em]">
+                    <span>View Approved Files</span>
+                    <i class="fas fa-chevron-right ml-3 group-hover:translate-x-2 transition-transform"></i>
+                </div>
+            </div>
+        </div>
+
+        <div onclick="navigateToApproved('gold')" class="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-500 group cursor-pointer relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-700"></div>
+            
+            <div class="flex flex-col items-center text-center space-y-6 relative z-10">
+                <div class="w-24 h-24 rounded-[2rem] bg-amber-50 text-amber-600 flex items-center justify-center text-4xl shadow-inner group-hover:bg-amber-500 group-hover:text-white transition-all duration-500">
+                    <i class="fas fa-coins"></i>
+                </div>
+                <div>
+                    <h3 class="text-xl font-black text-slate-800 uppercase tracking-tight">Gold Loan</h3>
+                    <p class="text-[10px] text-amber-600 font-black uppercase mt-2 tracking-[0.2em]">Active Portfolios</p>
+                </div>
+                <div class="w-full pt-4 border-t border-slate-50 flex items-center justify-center text-amber-600 font-black text-[10px] uppercase tracking-[0.2em]">
+                    <span>View Approved Files</span>
+                    <i class="fas fa-chevron-right ml-3 group-hover:translate-x-2 transition-transform"></i>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+
+
+<script src="{{ url_for('static',filename='adminPanel/js/customerDesk/loan_approved.js')}}"></script>
+{% endblock content %}

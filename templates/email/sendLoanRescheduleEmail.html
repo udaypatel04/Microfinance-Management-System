@@ -1,0 +1,57 @@
+{% extends "email/baseEmail.html" %}
+
+{% block email_content %}
+<div style="text-align: center; margin-bottom: 24px;">
+    <div style="display: inline-block; width: 64px; height: 64px; background-color: #eef2ff; border-radius: 20px; text-align: center; vertical-align: middle;">
+        <span style="color: #4f46e5; font-size: 32px; line-height: 64px;">🗓️</span>
+    </div>
+    
+    <h2 style="margin: 16px 0 8px 0; color: #0f172a; font-size: 20px; font-weight: 800; letter-spacing: -0.5px;">
+        Appointment Rescheduled
+    </h2>
+    <p style="margin: 0; color: #64748b; font-size: 14px;">
+        Your {{ loan_name }} verification slot has been updated.
+    </p>
+</div>
+
+<p style="margin: 0 0 16px 0; font-size: 15px; color: #1e293b;">Hello <strong>{{ user_name }}</strong>,</p>
+
+<p style="margin: 0 0 24px 0; font-size: 14px; color: #475569; line-height: 1.6;">
+    This is to confirm that your appointment for Application 
+    <span style="font-family: monospace; background-color: #f1f5f9; padding: 2px 6px; border-radius: 4px; color: #2563eb; font-weight: 700;">
+        {{ app_no }}
+    </span> has been successfully moved to the new time slot requested.
+</p>
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-bottom: 32px; border: 1px solid #f1f5f9; border-radius: 20px; overflow: hidden; table-layout: fixed;">
+    <tr>
+        <td style="padding: 20px; background-color: #fcfcfc; border-right: 1px solid #f1f5f9;">
+            <p style="margin: 0 0 8px 0; font-size: 9px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px;">Previous Slot</p>
+            <p style="margin: 0; font-size: 13px; color: #94a3b8; text-decoration: line-through;">{{ old_date }}</p>
+            <p style="margin: 2px 0 0 0; font-size: 12px; color: #cbd5e1; text-decoration: line-through;">{{ old_time }}</p>
+        </td>
+        <td style="padding: 20px; background-color: #ffffff;">
+            <p style="margin: 0 0 8px 0; font-size: 9px; font-weight: 800; color: #4f46e5; text-transform: uppercase; letter-spacing: 1px;">New Confirmed Slot</p>
+            <p style="margin: 0; font-size: 14px; color: #1e293b; font-weight: 800;">{{ new_date }}</p>
+            <p style="margin: 2px 0 0 0; font-size: 13px; color: #4f46e5; font-weight: 700;">{{ new_time }}</p>
+        </td>
+    </tr>
+</table>
+
+<div style="text-align: center; margin-bottom: 32px;">
+    <a href="{{ dashboard_url }}" style="display: inline-block; padding: 16px 32px; background-color: #2563eb; color: #ffffff; text-decoration: none; border-radius: 14px; font-size: 14px; font-weight: 700; box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.2);">
+        View Application Dashboard
+    </a>
+</div>
+
+<div style="padding: 20px; border-radius: 16px; background-color: #f8fafc; border: 1px solid #e2e8f0;">
+    <p style="margin: 0; font-size: 12px; color: #64748b; line-height: 1.6; text-align: center;">
+        <strong>Note:</strong> Please ensure you have all original documents ready for verification at the new time. If you need to change this again, please do so at least 24 hours in advance.
+    </p>
+</div>
+
+<p style="margin: 32px 0 0 0; font-size: 12px; color: #94a3b8; text-align: center; line-height: 1.5;">
+    Best regards,<br>
+    <span style="color: #475569; font-weight: 700;">FinTrack Support Team</span>
+</p>
+{% endblock %}

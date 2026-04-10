@@ -1,0 +1,188 @@
+{% extends "adminPanel/base.html" %}
+
+{% block title %}Dashboard{% endblock title %}
+
+{% block content %}
+<div class="min-h-screen bg-slate-50/50 p-4 lg:p-8 transition-all duration-400">
+    
+    <header class="mb-10 animate__animated animate__fadeIn">
+        <div class="flex flex-col min-[1289px]:flex-row min-[1289px]:items-center justify-between gap-4 text-center min-[1289px]:text-left">
+            <div>
+                <h1 class="text-3xl font-black text-slate-900 tracking-tight">System Overview</h1>
+                <p class="text-slate-500 font-medium mt-1">Welcome back, Admin. Here is what's happening today.</p>
+            </div>
+
+            <div class="flex flex-col sm:flex-row items-center justify-center min-[1289px]:justify-end gap-4">
+                <a href="/contact-enquiry-view" class="flex items-center space-x-2 bg-white hover:bg-slate-900 hover:text-white px-5 py-2.5 rounded-2xl border border-slate-200 shadow-sm transition-all duration-300 group">
+                    <div class="w-2 h-2 rounded-full bg-blue-600 group-hover:bg-blue-400"></div>
+                    <span class="text-xs font-black uppercase tracking-wider">Contact Enquiries</span>
+                    <i class="fas fa-external-link-alt text-[10px] opacity-40 group-hover:opacity-100 ml-1"></i>
+                </a>
+
+                <div class="flex items-center space-x-3 bg-white p-2.5 rounded-2xl border border-slate-100 shadow-sm">
+                    <span class="flex h-3 w-3 rounded-full bg-green-500 ml-2 animate-pulse"></span>
+                    <span class="text-xs font-bold text-slate-600 pr-3 uppercase tracking-wider">System Live</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 min-[1289px]:grid-cols-4 gap-6 mb-10">
+
+        <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-xl shadow-slate-200/50 hover:scale-[1.02] transition-transform duration-300 flex flex-col items-center min-[1289px]:items-start text-center min-[1289px]:text-left">
+            <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center mb-4">
+                <i class="fas fa-indian-rupee-sign text-lg"></i>
+            </div>
+            <p class="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Active Loans</p>
+            <h3 class="text-3xl font-black text-slate-900">{{active_loans}}</h3>
+            <div class="mt-4 flex items-center text-slate-400 text-[11px] font-bold">
+               <i class="fas fa-wave-square mr-1.5 text-blue-500 text-[9px]"></i>
+               Secure <span class="text-slate-300 ml-1 font-medium italic">Asset Portfolio</span>
+            </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-xl shadow-slate-200/50 hover:scale-[1.02] transition-transform duration-300 flex flex-col items-center min-[1289px]:items-start text-center min-[1289px]:text-left">
+            <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-4">
+                <i class="fas fa-users"></i>
+            </div>
+            <p class="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Total Users</p>
+            <h3 class="text-3xl font-black text-slate-900">{{total_users}}</h3>
+            <div class="mt-4 flex items-center text-slate-400 text-[11px] font-bold">
+                <i class="fas fa-database mr-1.5 text-emerald-500 text-[9px]"></i> 
+                Global <span class="text-slate-300 ml-1 font-medium italic">User Registry</span>
+            </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-xl shadow-slate-200/50 hover:scale-[1.02] transition-transform duration-300 flex flex-col items-center min-[1289px]:items-start text-center min-[1289px]:text-left">
+            <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center mb-4">
+                <i class="fas fa-user-clock"></i>
+            </div>
+            <p class="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Pending KYC</p>
+            <h3 class="text-3xl font-black text-slate-900">{{pending_kyc}}</h3>
+            <div class="mt-4 flex items-center text-slate-400 text-[11px] font-bold">
+                <i class="fas fa-clock-rotate-left mr-1.5 text-amber-500 text-[9px]"></i> 
+                Awaiting <span class="text-slate-300 ml-1 font-medium italic">Admin Review</span>
+            </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-xl shadow-slate-200/50 hover:scale-[1.02] transition-transform duration-300 flex flex-col items-center min-[1289px]:items-start text-center min-[1289px]:text-left">
+            <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-4">
+                <i class="fas fa-users-gear"></i>
+            </div>
+            <p class="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Total Staff</p>
+            <h3 class="text-3xl font-black text-slate-900">{{total_staff}}</h3>
+            <div class="mt-4 flex items-center text-slate-400 text-[11px] font-bold">
+                <i class="fas fa-network-wired mr-1.5 text-indigo-500 text-[9px]"></i> 
+                Active <span class="text-slate-300 ml-1 font-medium italic">Internal Network</span>
+            </div>
+        </div>
+    </div>
+
+    <section>
+        <div class="flex items-center justify-center min-[1289px]:justify-between mb-6">
+            <h2 class="text-xl font-black text-slate-800 tracking-tight">Quick Actions</h2>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 min-[1289px]:grid-cols-3 gap-6">
+            
+            <a href="/loan-type-with-interest" class="group bg-blue-600 p-8 rounded-[3rem] text-white shadow-2xl shadow-blue-500/30 transition-all duration-500 hover:-translate-y-2 flex flex-col items-center min-[1289px]:items-start text-center min-[1289px]:text-left">
+                <div class="flex justify-between items-center w-full mb-10">
+                    <div class="w-14 h-14 rounded-2xl bg-white/20 flex items-center justify-center group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 mx-auto min-[1289px]:mx-0">
+                        <i class="fas fa-cogs text-2xl"></i>
+                    </div>
+                    <i class="fas fa-arrow-right opacity-40 group-hover:opacity-100 group-hover:translate-x-2 transition-all hidden min-[1289px]:block"></i>
+                </div>
+                <h4 class="text-xl font-black leading-tight">Interest<br class="hidden min-[1289px]:block">Management</h4>
+                <p class="text-blue-100/60 text-xs mt-4 font-medium">Update global loan rates and terms.</p>
+            </a>
+
+            <a href="/site-settings" class="group bg-emerald-600 p-8 rounded-[3rem] text-white shadow-2xl shadow-emerald-500/30 transition-all duration-500 hover:-translate-y-2 flex flex-col items-center min-[1289px]:items-start text-center min-[1289px]:text-left">
+                <div class="flex justify-between items-center w-full mb-10">
+                    <div class="w-14 h-14 rounded-2xl bg-white/20 flex items-center justify-center group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 mx-auto min-[1289px]:mx-0">
+                        <i class="fas fa-sliders-h text-2xl"></i>
+                    </div>
+                    <i class="fas fa-arrow-right opacity-40 group-hover:opacity-100 group-hover:translate-x-2 transition-all hidden min-[1289px]:block"></i>
+                </div>
+                <h4 class="text-xl font-black leading-tight">System<br class="hidden min-[1289px]:block">Preferences</h4>
+                <p class="text-emerald-100/60 text-xs mt-4 font-medium">Manage branding and global site rules.</p>
+            </a>
+
+            <a href="/document-verification" class="group bg-slate-900 p-8 rounded-[3rem] text-white shadow-2xl shadow-slate-900/30 transition-all duration-500 hover:-translate-y-2 flex flex-col items-center min-[1289px]:items-start text-center min-[1289px]:text-left">
+                <div class="flex justify-between items-center w-full mb-10">
+                    <div class="w-14 h-14 rounded-2xl bg-white/10 flex items-center justify-center group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 mx-auto min-[1289px]:mx-0">
+                        <i class="fas fa-user-shield text-2xl"></i>
+                    </div>
+                    <i class="fas fa-arrow-right opacity-40 group-hover:opacity-100 group-hover:translate-x-2 transition-all hidden min-[1289px]:block"></i>
+                </div>
+                <h4 class="text-xl font-black leading-tight">Verification<br class="hidden min-[1289px]:block">Queue</h4>
+                <p class="text-slate-400 text-xs mt-4 font-medium">Approve pending documents and loans.</p>
+            </a>
+        </div>
+    </section>
+
+</div>
+
+
+
+<section id="reports-section" class="mb-10 animate__animated animate__fadeIn animate__delay-1s">
+    <div class="bg-white p-8 rounded-[2rem] border border-slate-100 shadow-xl shadow-slate-200/50">
+        <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+            <div>
+                <h2 class="text-xl font-black text-slate-800 tracking-tight">System Performance Reports</h2>
+                <p class="text-slate-400 text-xs font-bold uppercase tracking-wider mt-1">Loan Portfolio, User Activity, KYC, and Staff Metrics</p>
+            </div>
+            
+            <div class="flex items-center gap-3 bg-slate-50 p-1.5 rounded-2xl border border-slate-100 print:hidden">
+                <select id="yearFilter" class="bg-transparent text-xs font-bold text-slate-600 outline-none px-3 py-1 cursor-pointer">
+                    <option value="2026">2026</option>
+                    <option value="2025">2025</option>
+                </select>
+                <div class="w-[1px] h-4 bg-slate-200"></div>
+                <select id="monthFilter" class="bg-transparent text-xs font-bold text-slate-600 outline-none px-3 py-1 cursor-pointer">
+                    <option value="all">Yearly View</option>
+                    <option value="01">January</option>
+                    <option value="02">February</option>
+                    <option value="03">March</option>
+                    <option value="04">April</option>
+                    <option value="05">May</option>
+                    <option value="06">June</option>
+                    <option value="07">July</option>
+                    <option value="08">August</option>
+                    <option value="09">September</option>
+                    <option value="10">October</option>
+                    <option value="11">November</option>
+                    <option value="12">December</option>
+                </select>
+                <button onclick="window.print()" class="bg-slate-900 text-white p-2 rounded-xl hover:bg-blue-600 transition-colors">
+                    <i class="fas fa-print text-[10px]"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="bg-slate-50/50 p-6 rounded-2xl border border-slate-100">
+                <h3 class="text-sm font-bold text-slate-700 mb-4">Total Loan Volume (INR)</h3>
+                <div id="loanVolumeChart" class="min-h-[250px]"></div>
+            </div>
+
+            <div class="bg-slate-50/50 p-6 rounded-2xl border border-slate-100">
+                <h3 class="text-sm font-bold text-slate-700 mb-4">New User Registrations</h3>
+                <div id="newUserChart" class="min-h-[250px]"></div>
+            </div>
+
+            <div class="bg-slate-50/50 p-6 rounded-2xl border border-slate-100">
+                <h3 class="text-sm font-bold text-slate-700 mb-4">KYC Process Status</h3>
+                <div id="kycStatusChart" class="min-h-[250px] flex items-center justify-center"></div>
+            </div>
+
+            <div class="bg-slate-50/50 p-6 rounded-2xl border border-slate-100">
+                <h3 class="text-sm font-bold text-slate-700 mb-4">Staff Application Processing</h3>
+                <div id="staffActivityChart" class="min-h-[250px]"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script src="{{ url_for('static',filename='adminPanel/js/dashboard.js')}}"></script>
+
+
+{% endblock %}

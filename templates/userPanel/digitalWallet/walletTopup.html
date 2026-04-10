@@ -1,0 +1,87 @@
+{% extends 'userPanel/base.html' %}
+
+{% block title %}Top-up Wallet | Micro Finance{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8 max-w-2xl">
+    <div class="mb-8">
+        <h1 class="text-3xl font-black text-slate-900">Digital Wallet</h1>
+        <p class="text-slate-500 text-sm">Securely add funds to your account for instant EMI repayments.</p>
+    </div>
+
+    <div class="bg-blue-50 border border-blue-100 rounded-[2.5rem] p-6 mb-6">
+        <div class="flex justify-between items-center mb-4">
+            <span class="text-[10px] font-black uppercase text-blue-600 tracking-widest">Smart Loading Limit</span>
+            <span class="bg-blue-600 text-white text-[8px] px-2 py-0.5 rounded-full font-bold">3X EMI PROTECTED</span>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <p class="text-[10px] text-slate-500 font-bold uppercase tracking-tight">Max Capacity</p>
+                <h4 class="text-xl font-black text-slate-900">₹{{ "{:,.2f}".format(max_limit) }}</h4>
+            </div>
+            <div class="text-right">
+                <p class="text-[10px] text-slate-500 font-bold uppercase tracking-tight">Remaining Space</p>
+                <h4 class="text-xl font-black text-emerald-600">₹{{ "{:,.2f}".format(remaining_limit) }}</h4>
+            </div>
+        </div>
+        
+        <div class="w-full bg-slate-200 h-2 rounded-full mt-4 overflow-hidden">
+            <div class="bg-blue-600 h-full transition-all duration-1000 ease-out" 
+                 style="width: {{ (wallet_balance / max_limit * 100) if max_limit > 0 else 0 }}%">
+            </div>
+        </div>
+        <p class="text-[9px] text-blue-500 mt-2 font-medium">※ Limit is based on 3 months of active Bike & Gold Loan EMIs.</p>
+    </div>
+
+    <div class="relative overflow-hidden bg-slate-900 rounded-[2.5rem] p-8 mb-8 shadow-2xl shadow-slate-900/40">
+        <div class="absolute top-0 right-0 p-8 opacity-10">
+            <i class="fas fa-wallet text-8xl text-white"></i>
+        </div>
+        <div class="relative z-10">
+            <p class="text-slate-400 text-xs font-black uppercase tracking-[0.2em] mb-2">Available Liquidity</p>
+            <h2 class="text-4xl font-black text-white">₹{{ "{:,.2f}".format(wallet_balance) }}</h2>
+            <div class="mt-4 inline-flex items-center space-x-2 bg-emerald-500/20 px-3 py-1 rounded-full border border-emerald-500/30">
+                <span class="relative flex h-2 w-2">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                </span>
+                <span class="text-[10px] font-bold text-emerald-400 uppercase tracking-tighter">Verified Account</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-[2.5rem] border border-slate-100 p-8 shadow-xl shadow-slate-200/50">
+        <form method="POST" id="topupForm">
+            <label class="block text-slate-400 text-[10px] font-black uppercase tracking-widest mb-4">Enter Top-up Amount</label>
+            
+            <div class="relative mb-2">
+                <span class="absolute left-5 top-1/2 -translate-y-1/2 text-2xl font-black text-slate-400">₹</span>
+                <input type="number" name="amount" min=1 id="topupAmount"
+               
+                 onkeydown="if(['e','E','+','-','.'].includes(event.key)) event.preventDefault();"
+
+                 placeholder="0.00" required
+                    class="w-full bg-slate-50 border-none rounded-2xl py-5 pl-12 pr-6 text-2xl font-black text-slate-900 focus:ring-2 focus:ring-emerald-500 transition-all outline-none">
+            </div>
+            <p id="limitError" class="text-red-500 text-[10px] font-bold uppercase mb-6 hidden">Amount exceeds your smart loading limit!</p>
+
+            <div class="grid grid-cols-3 gap-3 mt-6 mb-8">
+                <button type="button" onclick="setAmount(500)" class="py-3 rounded-xl border border-slate-100 font-bold text-slate-600 hover:bg-emerald-50 transition-all">+ ₹500</button>
+                <button type="button" onclick="setAmount(1000)" class="py-3 rounded-xl border border-slate-100 font-bold text-slate-600 hover:bg-emerald-50 transition-all">+ ₹1,000</button>
+                <button type="button" onclick="setAmount(2000)" class="py-3 rounded-xl border border-slate-100 font-bold text-slate-600 hover:bg-emerald-50 transition-all">+ ₹2,000</button>
+            </div>
+
+            <button type="submit" id="submitBtn" class="w-full bg-emerald-600 text-white font-black py-5 rounded-2xl shadow-lg shadow-emerald-600/30 hover:bg-emerald-700 transition-all active:scale-95 flex items-center justify-center space-x-3 uppercase tracking-widest text-sm">
+                <span>Secure Checkout</span>
+                <i class="fas fa-arrow-right text-xs"></i>
+            </button>
+        </form>
+    </div>
+</div>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+    const remainingLimit = {{ remaining_limit }};
+</script>
+<script src="{{url_for('static', filename='userPanel/js/digitalWallet/wallet_topup.js') }}"> </script>
+{% endblock %}

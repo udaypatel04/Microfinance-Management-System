@@ -1,0 +1,162 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
+body { 
+    font-family: 'Plus Jakarta Sans', sans-serif; 
+}
+
+.custom-shadow { 
+    box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05); 
+}
+
+.sidebar-scroll { 
+    -ms-overflow-style: none; 
+    scrollbar-width: none; 
+}
+.sidebar-scroll::-webkit-scrollbar { 
+    display: none; 
+}
+
+.submenu-container {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    display: none; 
+    transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1), 
+                opacity 0.4s ease;
+}
+
+.submenu-container.show {
+    display: block; 
+    max-height: 600px; 
+    opacity: 1;
+}
+
+.submenu-item {
+    display: flex !important;
+    align-items: center !important;
+    white-space: nowrap !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transform: translateX(-15px);
+    opacity: 0;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
+                background 0.3s ease, 
+                color 0.2s ease,
+                padding 0.3s ease,
+                opacity 0.4s ease;
+}
+
+.submenu-container.show .submenu-item {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+.submenu-item:nth-child(1) { transition-delay: 0.05s; }
+.submenu-item:nth-child(2) { transition-delay: 0.10s; }
+.submenu-item:nth-child(3) { transition-delay: 0.15s; }
+.submenu-item:nth-child(4) { transition-delay: 0.20s; }
+.submenu-item:nth-child(5) { transition-delay: 0.25s; }
+.submenu-item:nth-child(6) { transition-delay: 0.30s; }
+.submenu-item:nth-child(7) { transition-delay: 0.35s; }
+
+.chevron-rotate {
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.rotate-180 { 
+    transform: rotate(180deg); 
+}
+
+.blue-hover:hover {
+    background: rgba(37, 99, 235, 0.12) !important;
+    color: #60a5fa !important;
+    padding-left: 1.75rem !important;
+    border-left: 3px solid #2563eb;
+}
+
+.emerald-hover:hover {
+    background: rgba(16, 185, 129, 0.12) !important;
+    color: #34d399 !important;
+    padding-left: 1.75rem !important;
+    border-left: 3px solid #10b981;
+}
+
+.yellow-hover:hover {
+    background: rgba(234, 179, 8, 0.12) !important;
+    color: #fbbf24 !important;
+    padding-left: 1.75rem !important;
+    border-left: 3px solid #eab308;
+}
+
+.logout-hover:hover {
+    background: rgba(239, 68, 68, 0.1) !important;
+    color: #f87171 !important;
+    padding-left: 1.75rem !important;
+    border-left: 3px solid #ef4444;
+}
+
+.profile-actions {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.footer-group:hover .profile-actions {
+    max-height: 200px;
+    opacity: 1;
+    padding-bottom: 1rem;
+}
+.footer-group:hover .profile-actions .submenu-item {
+    opacity: 1 !important;
+    transform: translateX(0) !important;
+}
+
+main {
+    transition: margin-left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#sidebar {
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
+                transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow-x: hidden;
+    height: 100dvh !important;
+    display: flex;
+    flex-direction: column;
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+::-webkit-scrollbar-track {
+    background: #0f172a; 
+}
+::-webkit-scrollbar-thumb {
+    background: #1e293b; 
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #334155; 
+}
+
+
+@keyframes loader-pulse {
+    0%, 100% { transform: scale(1); opacity: 0.3; }
+    50% { transform: scale(1.5); opacity: 1; }
+}
+@keyframes loader-slide {
+    0% { transform: translateX(-150%); }
+    100% { transform: translateX(300%); }
+}
+
+
+
+@media print {
+    header, aside, .operational-shortcuts, .grid-cols-4, .print-hide {
+        display: none !important;
+    }
+    #reports-section {
+        position: absolute; left: 0; top: 0; width: 100%;
+    }
+    .grid { display: block !important; }
+    .bg-[rgb(248,250,252)] { margin-bottom: 20px; page-break-inside: avoid; }
+}

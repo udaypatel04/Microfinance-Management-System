@@ -1,0 +1,83 @@
+{% extends 'userPanel/base.html' %}
+{% block title %}Dashboard | FinTrack{% endblock %}
+
+{% block content %}
+<div class="flex flex-col md:flex-row md:items-center justify-between mb-8 md:mb-12 gap-4 md:gap-6 animate__animated animate__fadeIn">
+    <div class="px-2 md:px-0">
+        <h1 class="text-3xl md:text-4xl font-black text-slate-900 tracking-tight">
+            Hello, <span class="text-blue-600">{{ session.get('user_name', 'User') }}</span>
+        </h1>
+        <p class="text-slate-400 font-bold mt-1 uppercase text-[10px] tracking-[0.2em]">Loan Management System • {{today}}</p>
+    </div>
+</div>
+
+
+<div class="grid grid-cols-1 sm:grid-cols-2 [@media(min-width:1385px)]:grid-cols-5 gap-6 mb-12 max-w-[90rem] mx-auto px-4 sm:px-6 justify-center">
+    
+    <div class="bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-200/50 flex flex-col items-center justify-center text-center w-full max-w-sm">
+        <div class="relative flex items-center justify-center w-28 h-28">
+            <svg class="w-full h-full transform -rotate-90">
+                <circle cx="56" cy="56" r="48" stroke="currentColor" stroke-width="4" fill="transparent" class="text-slate-50" />
+                <circle id="creditRing" cx="56" cy="56" r="48" stroke="currentColor" stroke-width="8" fill="transparent" stroke-dasharray="301.5" stroke-dashoffset="301.5" class="text-blue-600 transition-all duration-1000 ease-out" stroke-linecap="round" />
+            </svg>
+            <div class="absolute inset-0 flex flex-col items-center justify-center -space-y-1">
+                <span id="creditScoreVal" class="text-2xl font-black text-slate-900 leading-none">--</span>
+                <span id="creditScoreLabel" class="text-[8px] font-black text-slate-400 uppercase tracking-tighter leading-none pt-1">Calculating</span>
+            </div>
+        </div>
+        <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-4">Trust Score</p>
+    </div>
+
+    <div class="bg-white p-6 md:p-8 rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-200/50 flex flex-col items-center sm:items-start text-center sm:text-left w-full max-w-sm">
+        <div class="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center mb-4 border border-emerald-100">
+            <i class="fas fa-wallet"></i>
+        </div>
+        <p class="text-slate-400 text-[10px] font-black uppercase tracking-widest">Wallet Balance</p>
+        <div class="flex items-baseline space-x-1 mt-1">
+            <h3 id="walletBalance" class="text-2xl font-black text-emerald-600">₹0</h3>
+            <span class="text-[10px] font-bold text-emerald-400 uppercase">Avail.</span>
+        </div>
+    </div>
+
+    <div class="bg-white p-6 md:p-8 rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-200/50 flex flex-col items-center sm:items-start text-center sm:text-left w-full max-w-sm">
+        <div class="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center mb-4">
+            <i class="fas fa-hand-holding-dollar"></i>
+        </div>
+        <p class="text-slate-400 text-[10px] font-black uppercase tracking-widest">Total Outstanding</p>
+        <h3 id="totalOutstanding" class="text-2xl font-black text-slate-900 mt-1">₹0</h3>
+    </div>
+
+    <div class="bg-white p-6 md:p-8 rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-200/50 flex flex-col items-center sm:items-start text-center sm:text-left w-full max-w-sm">
+        <div class="w-10 h-10 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center mb-4">
+            <i class="fas fa-file-contract"></i>
+        </div>
+        <p class="text-slate-400 text-[10px] font-black uppercase tracking-widest">Active Loans</p>
+        <h3 id="activeLoansCount" class="text-2xl font-black text-slate-900 mt-1">00</h3>
+    </div>
+
+    <div class="bg-slate-900 p-6 md:p-8 rounded-[2.5rem] shadow-2xl shadow-slate-900/30 flex flex-col items-center sm:items-start text-center sm:text-left w-full max-w-sm sm:col-span-2 [@media(min-width:1385px)]:col-span-1 justify-self-center">
+        <div class="w-10 h-10 bg-white/10 text-white rounded-xl flex items-center justify-center mb-4">
+            <i class="fas fa-calendar-check"></i>
+        </div>
+        <p class="text-slate-400 text-[10px] font-black uppercase tracking-widest text-slate-500">Next EMI Due</p>
+        <h3 id="nextEmi" class="text-2xl font-black text-white mt-1">--/--</h3>
+    </div>
+
+</div>
+
+
+
+<div class="mb-10 px-2 md:px-0">
+    <div class="flex items-center justify-between mb-8">
+        <h3 class="text-2xl font-black text-slate-800 tracking-tight">Active Loan Portfolio</h3>
+    </div>
+
+    <div id="loanPortfolioContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="col-span-full py-20 text-center animate-pulse">
+            <p class="text-[10px] font-black uppercase text-slate-400 tracking-widest text-center w-full">Syncing Account Data...</p>
+        </div>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='userPanel/js/dashboard.js') }}"></script>
+{% endblock %}

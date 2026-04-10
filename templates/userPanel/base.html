@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}User Portal | FinTrack{% endblock title %}</title>
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='userPanel/css/user_common.css') }}">
+</head>
+
+<body class="bg-[rgb(248,250,252)] text-[rgb(30,41,59)]">
+
+<div id="sidebar-overlay" class="fixed inset-0 bg-[rgba(15,23,42,0.6)] z-40 hidden lg:hidden backdrop-blur-sm transition-opacity duration-300"  onclick="toggleSidebar(event)"></div>
+
+<div id="floating-toggle" class="lg:hidden fixed z-[60] touch-none" style="top: 24px; left: 24px;">
+    <button id="drag-handle" 
+            onclick="toggleSidebar(event)" 
+           
+            class="bg-white p-4 rounded-2xl shadow-xl border border-[rgb(241,245,249)] text-[rgb(71,85,105)] active:scale-95 transition-transform select-none">
+        <i class="fas fa-bars-staggered text-xl"></i>
+    </button>
+</div>
+
+<aside id="sidebar" class="fixed top-0 left-0 w-72 bg-[rgb(15,23,42)] text-[rgb(148,163,184)] z-50 border-r border-[rgb(30,41,59)] shadow-2xl transition-all duration-300 ease-in-out transform -translate-x-full lg:translate-x-0 h-screen flex flex-col">
+    
+    <div class="p-8 flex-shrink-0">
+        <div class="flex items-center space-x-3 text-white group cursor-default">
+            <div class="w-11 h-11 bg-[rgb(37,99,235)] rounded-xl flex items-center justify-center shadow-[0_0_20px_rgba(37,99,235,0.3)]">
+                <i class="fas fa-wallet text-xl"></i>
+            </div>
+            <div>
+                <span class="text-xl font-black tracking-tight block leading-none">FinTrack</span>
+                <span class="text-[9px] text-[rgb(96,165,250)] font-bold uppercase tracking-[0.2em] mt-1.5 block">Customer Portal</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="flex-1 overflow-y-auto px-4 sidebar-scroll">
+        <nav class="space-y-2">
+            
+            <a href="/user-dashboard" class="w-full flex items-center justify-center px-5 py-3.5 rounded-2xl bg-[rgb(37,99,235)] shadow-lg shadow-[rgba(37,99,235,0.3)] text-white group transition-all duration-300">
+                <span class="text-sm font-bold tracking-wide">Dashboard</span>
+            </a>
+
+            <div class="py-4 px-2">
+                <div class="h-[1px] w-full bg-slate-800"></div>
+            </div>
+
+            <div class="space-y-1">
+                <button onclick="toggleDropdown('account-mgmt-menu')" class="w-full flex items-center justify-between px-5 py-3.5 rounded-2xl hover:bg-[rgba(148,163,184,0.1)] group transition-all">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-9 h-9 rounded-lg bg-[rgb(30,41,59)] flex items-center justify-center group-hover:bg-slate-500 transition-all">
+                            <i class="fas fa-sliders text-sm group-hover:text-white"></i>
+                        </div>
+                        <span class="text-sm font-semibold group-hover:text-slate-300 tracking-wide">Account Mgmt</span>
+                    </div>
+                    <i class="fas fa-chevron-down text-[10px] opacity-40 chevron-rotate transition-transform duration-300" id="account-mgmt-icon"></i>
+                </button>
+                <div id="account-mgmt-menu" class="submenu-container pl-10 pr-2 space-y-1">
+                    <a href="/document-status" class="submenu-item emerald-hover flex items-center space-x-3 px-4 py-2.5 rounded-xl text-[13px]">
+                        <i class="fas fa-file-shield text-[10px]"></i><span>Documents Status</span>
+                    </a>
+                    <a href="/gold-loan-calculator" class="submenu-item yellow-hover flex items-center space-x-3 px-4 py-2.5 rounded-xl text-[13px]">
+                        <i class="fas fa-coins text-[10px]"></i><span>Gold Loan Calc</span>
+                    </a>
+                    <a href="/bike-loan-calculator" class="submenu-item blue-hover flex items-center space-x-3 px-4 py-2.5 rounded-xl text-[13px]">
+                        <i class="fas fa-motorcycle text-[10px]"></i><span>Bike Loan Calc</span>
+                    </a>
+
+                    <a href="/bike-refinance-calculator" class="submenu-item emerald-hover flex items-center space-x-3 px-4 py-2.5 rounded-xl text-[13px]">
+                        <i class="fas fa-tachometer-alt text-[10px]"></i><span>Bike Refinance Calc</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="space-y-1">
+                <button onclick="toggleDropdown('loan-req-menu')" class="w-full flex items-center justify-between px-5 py-3.5 rounded-2xl hover:bg-[rgba(79,70,229,0.1)] group transition-all">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-9 h-9 rounded-lg bg-[rgb(30,41,59)] flex items-center justify-center group-hover:bg-[rgb(79,70,229)] transition-all">
+                            <i class="fas fa-paper-plane text-sm group-hover:text-white"></i>
+                        </div>
+                        <span class="text-sm font-semibold group-hover:text-[rgb(129,140,248)] tracking-wide">Apply Loan</span>
+                    </div>
+                    <i class="fas fa-chevron-down text-[10px] opacity-40 chevron-rotate transition-transform duration-300" id="loan-req-icon"></i>
+                </button>
+                <div id="loan-req-menu" class="submenu-container pl-10 pr-2 space-y-1">
+                    <a href="/request-gold-loan" class="submenu-item yellow-hover flex items-center space-x-3 px-4 py-2.5 rounded-xl text-[13px]">
+                        <div class="w-2 h-2 rounded-full bg-yellow-500 animate-pulse shadow-[0_0_8px_rgba(234,179,8,0.8)]"></div>
+                        <span>Gold Loan</span>
+                    </a>
+                    <a href="/request-bike-loan" class="submenu-item blue-hover flex items-center space-x-3 px-4 py-2.5 rounded-xl text-[13px]">
+                        <i class="fas fa-motorcycle text-[10px]"></i><span>Bike Loan</span>
+                    </a>
+
+                    <a href="/request-bike-refinance" class="submenu-item emerald-hover flex items-center space-x-3 px-4 py-2.5 rounded-xl text-[13px]">
+                        <i class="fas fa-tachometer-alt text-[10px]"></i><span>Bike Refinance</span>
+                    </a>
+                </div>
+            </div>
+
+
+
+            <div class="space-y-1">
+                <button onclick="toggleDropdown('loan-status-menu')" class="w-full flex items-center justify-between px-5 py-3.5 rounded-2xl hover:bg-[rgba(16,185,129,0.1)] group transition-all">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-9 h-9 rounded-lg bg-[rgb(30,41,59)] flex items-center justify-center group-hover:bg-emerald-500 transition-all">
+                            <i class="fas fa-history text-sm group-hover:text-white"></i>
+                        </div>
+                        <span class="text-sm font-semibold group-hover:text-emerald-400 tracking-wide">Loan Status</span>
+                    </div>
+                    <i class="fas fa-chevron-down text-[10px] opacity-40 chevron-rotate transition-transform duration-300" id="loan-status-icon"></i>
+                </button>
+
+                <div id="loan-status-menu" class="submenu-container pl-10 pr-2 space-y-1 hidden">
+                    <a href="/gold-loan-status" class="submenu-item yellow-hover flex items-center space-x-3 px-4 py-2.5 rounded-xl text-[13px]">
+                        <div class="w-2 h-2 rounded-full bg-yellow-500 shadow-[0_0_8px_rgba(234,179,8,0.4)]"></div>
+                        <span>Gold Loan Status</span>
+                    </a>
+
+                    <a href="/bike-loan-status" class="submenu-item blue-hover flex items-center space-x-3 px-4 py-2.5 rounded-xl text-[13px]">
+                        <i class="fas fa-motorcycle text-[10px] text-blue-400"></i>
+                        <span>Bike Loan / Refinance Status</span>
+                    </a>
+
+                </div>
+            </div>
+
+            <div class="space-y-1">
+                <button onclick="toggleDropdown('emi-menu')" class="w-full flex items-center justify-between px-5 py-3.5 rounded-2xl hover:bg-[rgba(79,70,229,0.1)] group transition-all">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-9 h-9 rounded-lg bg-[rgb(30,41,59)] flex items-center justify-center group-hover:bg-[rgb(79,70,229)] transition-all">
+                            <i class="fas fa-receipt text-sm group-hover:text-white"></i>
+                        </div>
+                        <span class="text-sm font-semibold group-hover:text-[rgb(129,140,248)] tracking-wide">Repayments</span>
+                    </div>
+                    <i class="fas fa-chevron-down text-[10px] opacity-40 chevron-rotate transition-transform duration-300" id="emi-icon"></i>
+                </button>
+                <div id="emi-menu" class="submenu-container pl-10 pr-2 space-y-1">
+                    <a href="/gold-loan-list" class="submenu-item yellow-hover flex items-center space-x-3 px-4 py-2.5 rounded-xl text-[13px]">
+                        <i class="fas fa-coins text-[10px]"></i><span>Gold Loan EMIs</span>
+                    </a>
+                    <a href="/bike-loan-list" class="submenu-item blue-hover flex items-center space-x-3 px-4 py-2.5 rounded-xl text-[13px]">
+                        <i class="fas fa-motorcycle text-[10px]"></i><span>Bike Loan / Refinance EMIs</span>
+                    </a>
+                </div>
+            </div>   
+            
+            
+            <div class="space-y-1 mt-2">
+                <button onclick="toggleDropdown('wallet-menu')" class="w-full flex items-center justify-between px-5 py-3.5 rounded-2xl hover:bg-[rgba(148,163,184,0.1)] group transition-all">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-9 h-9 rounded-lg bg-[rgb(30,41,59)] flex items-center justify-center group-hover:bg-slate-500 transition-all shadow-lg shadow-emerald-500/10">
+                            <i class="fas fa-wallet text-sm text-emerald-400 group-hover:text-white"></i>
+                        </div>
+                        <span class="text-sm font-semibold text-slate-300 group-hover:text-slate-300 tracking-wide">Digital Wallet</span>
+                    </div>
+                    <i class="fas fa-chevron-down text-[10px] opacity-40 text-slate-500 chevron-rotate transition-transform duration-300" id="wallet-icon"></i>
+                </button>
+                
+                <div id="wallet-menu" class="submenu-container pl-10 pr-2 space-y-1 ">
+                    
+                    <a href="/wallet-topup" class="submenu-item emerald-hover flex items-center space-x-3 px-4 py-2.5 rounded-xl text-[13px]">
+                        <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.8)]"></div>
+                        <span>Add Money / Top-up</span>
+                    </a>
+                    
+                    <a href="/wallet-transactions" class="submenu-item blue-hover flex items-center space-x-3 px-4 py-2.5 rounded-xl text-[13px]">
+                        <i class="fas fa-history text-[10px] transition-transform group-hover:rotate-[-45deg]"></i>
+                        <span>Transaction History</span>
+                    </a>
+                    
+                </div>
+            </div>
+        </nav>
+    </div>
+
+
+
+
+    <div class="mt-auto border-t border-[rgb(30,41,59)] bg-[rgb(15,23,42)] footer-group flex-shrink-0">
+        <div id="profile-menu" class="submenu-container px-4 overflow-hidden">
+            <div class="space-y-1 mt-4">
+                <div onclick="openUserProfile()" class="submenu-item emerald-hover flex items-center space-x-3 px-5 py-2.5 rounded-xl text-sm transition-all group cursor-pointer">
+                    <div class="w-8 h-8 rounded-lg bg-[rgb(30,41,59)] flex items-center justify-center group-hover:bg-[rgb(16,185,129)] transition-colors">
+                        <i class="fas fa-user text-[11px] text-[rgb(148,163,184)] group-hover:text-white"></i>
+                    </div>
+                    <span class="font-semibold text-[rgb(148,163,184)] group-hover:text-white">My Profile</span>
+                </div>
+                <a href="/logout" class="submenu-item logout-hover flex items-center space-x-3 px-5 py-2.5 rounded-xl text-[rgb(244,63,94)] font-bold text-sm transition-all">
+                    <div class="w-8 h-8 rounded-lg bg-[rgba(244,63,94,0.1)] flex items-center justify-center">
+                        <i class="fas fa-power-off text-[10px]"></i>
+                    </div>
+                    <span>Log Out</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="p-4 cursor-pointer" onclick="toggleDropdown('profile-menu')">
+            <div class="flex items-center space-x-3 bg-[rgba(30,41,59,0.3)] p-3 rounded-2xl border border-white/5 hover:bg-[rgba(30,41,59,0.6)] transition-all group">
+                <div class="relative">
+                    <div class="w-10 h-10 rounded-xl bg-[rgb(37,99,235)] flex items-center justify-center text-white font-bold text-sm overflow-hidden border border-white/10 shadow-lg">
+                        {% if session.get('profile_image') %}
+                            <img id="sidebar-user-img" class="w-full h-full object-cover" src="{{ session.get('profile_image') }}">
+                        {% else %}
+                            <span id="sidebar-default-avatar">{{ session.get('user_name', 'U')[0] }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-[rgb(34,197,94)] border-2 border-[rgb(15,23,42)] rounded-full"></div>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <div class="flex items-center justify-between">
+                        <p class="text-xs font-bold text-white truncate">{{ session.get('user_name', 'User') }}</p>
+                        <i class="fas fa-chevron-up text-[9px] text-[rgb(100,116,139)] chevron-rotate transition-transform duration-300" id="profile-icon"></i>
+                    </div>
+                    <p class="text-[10px] text-[rgb(100,116,139)] truncate font-medium">{{ session.get('email') }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</aside>
+
+
+<main class="transition-all duration-300 lg:ml-72 min-h-screen p-4 lg:p-8">
+    <div class="max-w-7xl mx-auto">
+        <div id="notification-container" class="fixed top-8 right-8 z-[100] flex flex-col gap-4 pointer-events-none"></div>
+        {% block content %}{% endblock content %}
+    </div>
+</main>
+
+
+<!--
+<div id="userProfileModal" class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-[rgba(15,23,42,0.6)] backdrop-blur-md"></div>
+    <div class="relative bg-white w-full max-w-md rounded-[32px] shadow-2xl overflow-hidden animate__animated animate__fadeInUp animate__faster">
+        <div class="relative h-32 bg-gradient-to-br from-[rgb(37,99,235)] to-[rgb(29,78,216)]">
+            <div class="absolute -bottom-12 left-1/2 -translate-x-1/2">
+                <div class="relative group">
+                    <div class="w-24 h-24 rounded-3xl bg-white p-1 shadow-xl">
+                        <div id="user-profile-container" class="w-full h-full rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center font-black text-3xl border border-slate-100 overflow-hidden">
+                            {% if session.get('profile_image') %}
+                                <img id="user-preview-img" class="w-full h-full object-cover" src="{{session.get('profile_image')}}">
+                            {% else %}
+                                <i id="user-default-icon" class="fas fa-user"></i>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <label for="user-image-input" class="absolute bottom-0 right-0 w-8 h-8 bg-blue-600 text-white rounded-xl border-4 border-white flex items-center justify-center cursor-pointer hover:bg-blue-700 transition-all shadow-lg active:scale-90">
+                        <i class="fas fa-camera text-[10px]"></i>
+                    </label>
+                    <input type="file" id="user-image-input" class="hidden" accept="image/*" onchange="uploadUserProfileImage(this)">
+                </div>
+            </div>
+            <button onclick="closeUserProfile()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-black/10 text-white hover:bg-black/20 flex items-center justify-center transition-all">
+                <i class="fas fa-times text-xs"></i>
+            </button>
+        </div>
+
+        <div class="pt-16 p-8 text-center">
+            <h3 class="text-xl font-black text-[rgb(30,41,59)] tracking-tight mb-1">{{ session.get('user_name') }}</h3>
+            <p class="text-[10px] text-blue-600 font-black uppercase tracking-[0.2em] mb-8">Verified Customer</p>
+
+            <div class="space-y-3 text-left">
+                <div class="p-4 bg-[rgb(248,250,252)] rounded-2xl border border-[rgb(241,245,249)] flex items-center justify-between">
+                    <div>
+                        <p class="text-[9px] text-slate-400 font-black uppercase tracking-widest mb-1">Email Address</p>
+                        <p class="text-sm font-bold text-slate-700" id="userEmail">{{ session.get('email') }}</p>
+                    </div>
+                    <i class="fas fa-envelope text-slate-200"></i>
+                </div>
+                <div class="p-4 bg-[rgb(248,250,252)] rounded-2xl border border-[rgb(241,245,249)] flex items-center justify-between">
+                    <div>
+                        <p class="text-[9px] text-slate-400 font-black uppercase tracking-widest mb-1">Password Status</p>
+                        <p class="text-sm font-bold text-slate-700">••••••••</p>
+                    </div>
+                    <i class="fas fa-lock text-slate-200"></i>
+                </div>
+            </div>
+
+            <div class="mt-6 space-y-2">
+                <button onclick="openUserSecurityModal()" class="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all active:scale-95 flex items-center justify-center gap-3 shadow-lg shadow-blue-600/20">
+                    <i class="fas fa-key"></i> Update Security
+                </button>
+                <button onclick="openUpdateProfileModal()" class="w-full py-4 bg-white hover:bg-slate-50 text-slate-700 border-2 border-slate-100 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all active:scale-95 flex items-center justify-center gap-3 shadow-sm">
+                    <i class="fas fa-user-edit text-blue-600"></i> Manage Profile
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+-->
+
+
+<div id="userProfileModal" class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-[rgba(15,23,42,0.6)] backdrop-blur-md"></div>
+    <div class="relative bg-white w-full max-w-md rounded-[32px] shadow-2xl overflow-hidden animate__animated animate__fadeInUp animate__faster">
+        
+        <div class="relative h-32 bg-gradient-to-br from-[rgb(37,99,235)] to-[rgb(29,78,216)]">
+            <div class="absolute -bottom-12 left-1/2 -translate-x-1/2">
+                <div class="relative group">
+                    <div class="w-24 h-24 rounded-3xl bg-white p-1 shadow-xl">
+                        <div id="user-profile-container" class="w-full h-full rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center font-black text-3xl border border-slate-100 overflow-hidden">
+                            {% if session.get('profile_image') %}
+                                <img id="user-preview-img" class="w-full h-full object-cover" src="{{session.get('profile_image')}}">
+                            {% else %}
+                                <i id="user-default-icon" class="fas fa-user"></i>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <label for="user-image-input" class="absolute bottom-0 right-0 w-8 h-8 bg-blue-600 text-white rounded-xl border-4 border-white flex items-center justify-center cursor-pointer hover:bg-blue-700 transition-all shadow-lg active:scale-90">
+                        <i class="fas fa-camera text-[10px]"></i>
+                    </label>
+                    <input type="file" id="user-image-input" class="hidden" accept="image/*" onchange="uploadUserProfileImage(this)">
+                </div>
+            </div>
+            <button onclick="closeUserProfile()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-black/10 text-white hover:bg-black/20 flex items-center justify-center transition-all">
+                <i class="fas fa-times text-xs"></i>
+            </button>
+        </div>
+
+        <div class="pt-16 p-8 text-center">
+            <h3 class="text-xl font-black text-[rgb(30,41,59)] tracking-tight mb-1">{{ session.get('user_name') }}</h3>
+            <p class="text-[10px] text-blue-600 font-black uppercase tracking-[0.2em] mb-8">Verified Customer</p>
+
+            <div class="space-y-3 text-left">
+                <div class="p-4 bg-[rgb(248,250,252)] rounded-2xl border border-[rgb(241,245,249)] flex items-center justify-between">
+                    <div>
+                        <p class="text-[9px] text-slate-400 font-black uppercase tracking-widest mb-1">Email Address</p>
+                        <p class="text-sm font-bold text-slate-700" id="userEmail">{{ session.get('email') }}</p>
+                    </div>
+                    <i class="fas fa-envelope text-slate-200"></i>
+                </div>
+
+                <div class="p-4 bg-indigo-50/50 rounded-2xl border border-indigo-100 flex items-center justify-between group transition-all">
+                    <div>
+                        <p class="text-[9px] text-indigo-400 font-black uppercase tracking-widest mb-1 text-left">Passkey Security</p>
+                        <div class="flex items-center gap-2">
+                            <div class="w-1.5 h-1.5 rounded-full {{ 'bg-emerald-500 animate-pulse' if session.get('has_passkey') else 'bg-slate-300' }}"></div>
+                            <p class="text-sm font-bold text-slate-700" id="key_info">{{ 'Active on Device' if session.get('has_passkey') else 'Not Registered' }}</p>
+                        </div>
+                    </div>
+                    
+                   <div class="flex items-center space-x-2">
+                        <button id="btn-passkey-remove" 
+                                onclick="removePasskey()" 
+                                style="display: none;" 
+                                class="w-10 h-10 bg-white border border-rose-100 text-rose-500 rounded-xl flex items-center justify-center hover:bg-rose-500 hover:text-white transition-all shadow-sm">
+                            <i class="fas fa-trash-alt text-xs"></i>
+                        </button>
+
+                        <button id="btn-passkey-register" 
+                                onclick="initiatePasskeyRegistration()" 
+                                style="display: none;" 
+                                class="w-10 h-10 bg-indigo-600 text-white rounded-xl flex items-center justify-center hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-200">
+                            <i class="fas fa-fingerprint"></i>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="mt-6 space-y-2">
+                <button onclick="openUserSecurityModal()" class="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all active:scale-95 flex items-center justify-center gap-3 shadow-lg shadow-blue-600/20">
+                    <i class="fas fa-key"></i> Update Security
+                </button>
+                <button onclick="openUpdateProfileModal()" class="w-full py-4 bg-white hover:bg-slate-50 text-slate-700 border-2 border-slate-100 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all active:scale-95 flex items-center justify-center gap-3 shadow-sm">
+                    <i class="fas fa-user-edit text-blue-600"></i> Manage Profile
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<div id="updateProfileModal" class="fixed inset-0 z-[80] hidden flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-md"></div>
+    
+    <div class="relative bg-white w-full max-w-lg rounded-[36px] shadow-2xl overflow-hidden animate__animated animate__fadeInUp animate__faster">
+        
+       <div class="px-8 py-5 border-b border-slate-50 flex justify-between items-center bg-slate-50/50">
+            <div class="flex items-center gap-4">
+                <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-blue-100 animate__animated animate__zoomIn animate__faster">
+                    <i class="fas fa-user-edit text-sm"></i>
+                </div>
+                
+                <div>
+                    <h3 class="text-base font-black text-slate-800 uppercase tracking-tight leading-none">Update Profile</h3>
+                    <p class="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-1.5">Manage your personal account details</p>
+                </div>
+            </div>
+            
+            <button onclick="closeUpdateProfileModal()" class="w-9 h-9 rounded-full bg-slate-200/50 text-slate-500 hover:bg-slate-200 flex items-center justify-center transition-all">
+                <i class="fas fa-times text-xs"></i>
+            </button>
+        </div>
+
+        <form id="updateProfileForm" onsubmit="submitProfileUpdate(event)" class="p-8 space-y-4">
+            <div class="grid grid-cols-2 gap-4">
+                
+                <div class="col-span-1 group">
+                    <label class="block text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Full Name</label>
+                    <div class="relative">
+                        <input type="text" name="full_name" value="{{ session.get('user_name') }}" required 
+                            onKeyPress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode==32)"
+                            pattern="[A-Za-z ]{2,}"
+                            class="w-full py-3 px-5 pr-10 bg-slate-50 border-2 border-transparent rounded-2xl text-xs font-bold focus:border-blue-500 transition-all outline-none">
+                       
+                    </div>
+                </div>
+
+                <div class="col-span-1 group">
+                    <label class="block text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Email</label>
+                    <div class="relative">
+                        <input type="email" value="{{ session.get('email') }}" disabled 
+                            class="w-full py-3 px-5 bg-slate-100 border-none rounded-2xl text-xs font-bold text-slate-400 cursor-not-allowed outline-none">
+                        <i class="fas fa-lock absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 text-[10px]"></i>
+                    </div>
+                </div>
+
+                <div class="col-span-1 group">
+                    <label class="block text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Mobile</label>
+                    <div class="relative">
+                        <input type="tel" id="userMobile" name="mobile" value="{{ session.get('mobile') }}" required
+                            pattern="[6-9][0-9]{9}" 
+                            maxlength="10" 
+                            onkeypress="return (event.charCode >= 48 && event.charCode <= 57)"
+                            class="w-full py-3 px-5 pr-10 bg-slate-50 border-2 border-transparent rounded-2xl text-xs font-bold focus:border-blue-500 transition-all outline-none">
+                       
+                    </div>
+                </div>
+
+                <div class="col-span-1 group">
+                    <label class="block text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Gender</label>
+                    <div class="relative">
+                        <select name="gender" class="w-full py-3 px-5 pr-10 bg-slate-50 border-2 border-transparent rounded-2xl text-xs font-bold focus:border-blue-500 transition-all outline-none appearance-none">
+                            <option value="Male" {% if session.get('gender') == 'Male' %}selected{% endif %}>Male</option>
+                            <option value="Female" {% if session.get('gender') == 'Female' %}selected{% endif %}>Female</option>
+                        </select>
+                       
+                    </div>
+                </div>
+    
+                <div class="col-span-1 group">
+                    <label class="block text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1">DOB</label>
+                    <div class="relative">
+                        <input type="date" name="dob" value="{{ session.get('dob') }}"
+                            onfocus="this.max = new Date(new Date().setFullYear(new Date().getFullYear() - 18)).toISOString().split('T')[0]"
+                            class="w-full py-3 px-5 bg-slate-50 border-2 border-transparent rounded-2xl text-xs font-bold focus:border-blue-500 transition-all outline-none">
+                    </div>
+                </div>
+
+                <div class="col-span-1 group">
+                    <label class="block text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1">City</label>
+                    <div class="relative">
+                        <input type="text" name="city" value="{{ session.get('city') }}"
+                            onKeyPress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode==32)"
+                            pattern="[A-Za-z ]{2,}"
+                            class="w-full py-3 px-5 pr-10 bg-slate-50 border-2 border-transparent rounded-2xl text-xs font-bold focus:border-blue-500 transition-all outline-none">
+                        
+                    </div>
+                </div>
+
+                <div class="col-span-2 group">
+                    <label class="block text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Residential Address</label>
+                    <div class="relative">
+                        <textarea name="address" rows="3" placeholder="Full address details..." 
+                            onKeyPress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode >= 48 && event.charCode <= 57) || [32, 44, 45, 46, 47].includes(event.charCode)"
+                            class="w-full py-3 px-5 pr-10 bg-slate-50 border-2 border-transparent rounded-2xl text-xs font-bold focus:border-blue-500 transition-all outline-none resize-none">{{ session.get('address') or '' }}</textarea> 
+                       
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-4">
+                <button type="submit" class="w-full py-4 bg-slate-900 hover:bg-blue-600 text-white rounded-2xl text-[11px] font-black uppercase tracking-[0.2em] transition-all active:scale-95 shadow-xl shadow-slate-200">
+                    Update Details
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
+<div id="userSecurityModal" 
+     class="fixed inset-0 z-[100] flex {{ '' if session.get('is_temp') else 'hidden' }} items-center justify-center p-4">
+    
+    <div class="absolute inset-0 bg-[rgba(15,23,42,0.6)] backdrop-blur-md"></div>
+    
+    <div class="relative bg-white w-full max-w-md rounded-[32px] shadow-2xl overflow-hidden animate__animated animate__zoomIn animate__faster">
+        
+        <div class="p-6 bg-[rgb(248,250,252)] border-b border-[rgb(241,245,249)] flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center shadow-md">
+                    <i class="fas fa-user-shield text-xs"></i>
+                </div>
+                <h3 class="text-sm font-black text-slate-800 uppercase tracking-tight">Account Security</h3>
+            </div>
+            
+            {% if not session.get('is_temp') %}
+            <button onclick="closeUserSecurity()" class="text-slate-400 hover:text-slate-600 transition-colors">
+                <i class="fas fa-times"></i>
+            </button>
+            {% endif %}
+        </div>
+
+        <form id="update-user-form" onsubmit="updateUserCredentials(event)" class="p-8 space-y-5">
+            
+            {% if session.get('is_temp') %}
+            <div class="flex items-center gap-4 p-4 bg-orange-50 border border-orange-100 rounded-2xl animate__animated animate__pulse animate__infinite">
+                <div class="w-10 h-10 rounded-xl bg-orange-500 text-white flex flex-shrink-0 items-center justify-center shadow-sm">
+                    <i class="fas fa-key text-xs"></i>
+                </div>
+                <div>
+                    <p class="text-[9px] font-black text-orange-600 uppercase tracking-widest leading-none mb-1">Action Required</p>
+                    <p class="text-[11px] font-bold text-orange-900/70 leading-tight">Your password is temporary. Please update it to continue.</p>
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="space-y-1">
+                <label class="text-[10px] font-black text-slate-500 uppercase ml-1">New Password</label>
+                <div class="relative">
+                    <input id="new-user-password" type="password" placeholder="••••••••" 
+                           class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold outline-none focus:ring-2 focus:ring-blue-500/10" required>
+                    <i class="fas fa-eye absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 cursor-pointer hover:text-blue-600" 
+                       onclick="togglePassVisibility('new-user-password')"></i>
+                </div>
+            </div>
+
+            <div class="space-y-1">
+                <label class="text-[10px] font-black text-slate-500 uppercase ml-1">Confirm Password</label>
+                <input id="confirm-user-password" type="password" placeholder="••••••••" 
+                       class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold outline-none focus:ring-2 focus:ring-blue-500/10" required>
+            </div>
+
+            <div class="pt-4">
+                <button type="submit" class="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl text-[11px] font-black uppercase tracking-widest shadow-lg shadow-blue-600/20 transition-all active:scale-95">
+                    Update & Verify Account
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
+<div id="global-loader" class="fixed inset-0 z-[9999] hidden flex-col items-center justify-center bg-slate-50/60 backdrop-blur-2xl transition-all duration-500">
+    <div class="flex space-x-2">
+        <div class="w-3 h-3 bg-blue-600 rounded-full animate-[loader-pulse_1.5s_ease-in-out_infinite] shadow-[0_0_15px_rgba(37,99,235,0.4)]"></div>
+        <div class="w-3 h-3 bg-blue-600 rounded-full animate-[loader-pulse_1.5s_ease-in-out_0.2s_infinite] shadow-[0_0_15px_rgba(37,99,235,0.4)]"></div>
+        <div class="w-3 h-3 bg-blue-600 rounded-full animate-[loader-pulse_1.5s_ease-in-out_0.4s_infinite] shadow-[0_0_15px_rgba(37,99,235,0.4)]"></div>
+        <div class="w-3 h-3 bg-blue-600 rounded-full animate-[loader-pulse_1.5s_ease-in-out_0.6s_infinite] shadow-[0_0_15px_rgba(37,99,235,0.4)]"></div>
+    </div>
+    <div class="mt-8 text-center">
+        <p id="loader-text" class="text-slate-900 font-black text-[9px] uppercase tracking-[0.6em] mb-4 opacity-80">Loading</p>
+        <div class="w-40 h-[1.5px] bg-slate-200/50 rounded-full overflow-hidden">
+            <div class="h-full bg-blue-600 w-1/3 animate-[loader-slide_2s_infinite_ease-in-out]"></div>
+        </div>
+    </div>
+</div>
+
+<div id="user-meta" 
+     data-role="{{ session.get('role') }}" 
+     data-id="{{ session.get('admin_id') or session.get('staff_id') or session.get('user_id') }}">
+</div>
+
+
+<script src="{{ url_for('static', filename='userPanel/js/user_common.js') }}"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script src="{{ url_for('static', filename='passkey_access.js') }}"></script>
+
+</body>
+</html>

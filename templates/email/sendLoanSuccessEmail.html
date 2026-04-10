@@ -1,0 +1,63 @@
+{% extends "email/baseEmail.html" %}
+
+{% block email_content %}
+<div style="text-align: center; margin-bottom: 24px; sm:margin-bottom: 32px;">
+    <div style="display: inline-block; width: 56px; height: 56px; line-height: 56px; background-color: #f0fdf4; border-radius: 50%; text-align: center; margin-bottom: 16px;">
+        <span style="color: #16a34a; font-size: 28px; font-weight: bold;">✓</span>
+    </div>
+    
+    <h2 style="margin: 0; color: #0f172a; font-size: 18px; sm:text-2xl; font-weight: 800; letter-spacing: -0.5px; line-height: 1.2;">
+        Application Received Successfully!
+    </h2>
+    <p style="margin: 8px 0 0 0; color: #64748b; font-size: 13px; line-height: 1.4;">
+        Your {{loan_name}} request has been registered in our system.
+    </p>
+</div>
+
+<p style="margin: 0 0 12px 0; font-size: 15px;">Hello <strong>{{ user_name }}</strong>,</p>
+
+<p style="margin: 0 0 24px 0; font-size: 14px; color: #475569; line-height: 1.6;">
+    Thank you for choosing <strong>FinTrack</strong> for your {{loan_name}}. Your request has been submitted and is currently being processed by our team.
+</p>
+
+<div style="background-color: #f8fafc; border: 2px dashed #e2e8f0; border-radius: 20px; padding: 20px 10px; text-align: center; margin-bottom: 24px;">
+    <p style="margin: 0 0 8px 0; font-size: 10px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 1.5px;">
+        Application Reference Number
+    </p>
+    <div style="font-family: 'Courier New', Courier, monospace; font-size: 20px; sm:font-size: 28px; font-weight: 900; color: #2563eb; letter-spacing: 2px; sm:letter-spacing: 4px; word-break: break-all;">
+        {{ app_no }}
+    </div>
+</div>
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-bottom: 24px; border: 1px solid #f1f5f9; border-radius: 16px; overflow: hidden; table-layout: fixed;">
+    <tr>
+        <td style="padding: 12px 16px; background-color: #fcfcfc; border-bottom: 1px solid #f1f5f9;">
+            <p style="margin: 0; font-size: 10px; color: #94a3b8; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Appointment Details</p>
+        </td>
+    </tr>
+    <tr>
+        <td style="padding: 16px;">
+            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                <tr>
+                    <td style="padding-bottom: 10px; font-size: 13px; color: #64748b;">Date:</td>
+                    <td align="right" style="padding-bottom: 10px; font-size: 13px; color: #1e293b; font-weight: 700;">{{ appointment_date }}</td>
+                </tr>
+                <tr>
+                    <td style="font-size: 13px; color: #64748b;">Time Slot:</td>
+                    <td align="right" style="font-size: 13px; color: #1e293b; font-weight: 700;">{{ appointment_time }}</td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+
+<div style="text-align: center;">
+    <a href="{{ dashboard_url }}" style="display: inline-block; padding: 14px 24px; background-color: #2563eb; color: #ffffff; text-decoration: none; border-radius: 12px; font-size: 13px; font-weight: 700; box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.2);">
+        Track Application Status
+    </a>
+</div>
+
+<p style="margin: 24px 0 0 0; font-size: 12px; color: #94a3b8; text-align: center; line-height: 1.5;">
+    Please keep this application number handy for your appointment. Our representative will contact you shortly if any further documents are required.
+</p>
+{% endblock %}

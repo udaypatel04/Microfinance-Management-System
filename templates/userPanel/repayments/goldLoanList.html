@@ -1,0 +1,70 @@
+{% extends "userPanel/base.html" %}
+
+{% block title %}FinTrack | My Gold Loans{% endblock title %}
+
+{% block content %}
+<div class="space-y-6 animate__animated animate__fadeInUp animate__faster pb-20">
+    
+    <div class="relative flex flex-col lg:flex-row items-center justify-between gap-6 w-full mb-10 animate__animated animate__fadeInDown">
+        <div class="flex items-center w-full lg:w-auto">
+            <div class="flex-1 text-center lg:text-left lg:flex-none">
+                <h1 class="text-xl md:text-2xl font-black text-slate-800 tracking-tight uppercase">My Gold Loans</h1>
+                <p class="text-[10px] md:text-sm text-slate-500 font-medium whitespace-nowrap">Track your jewelry collateral and disbursement status</p>
+            </div>+
+            
+        </div>
+
+        <div class="flex items-center gap-3">
+             <a href="{{ url_for('gold_loan_calculator') }}" class="px-6 py-3 bg-amber-500 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-amber-100 hover:bg-slate-900 transition-all active:scale-95">
+                New Gold Loan +
+            </a>
+        </div>
+    </div>
+
+    <div class="bg-white p-4 rounded-3xl border border-slate-100 shadow-sm transition-all focus-within:shadow-md">
+        <div class="relative group">
+            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                <i class="fas fa-search text-slate-400 group-focus-within:text-amber-500 transition-all"></i>
+            </div>
+            <input type="text" id="loanSearch" onkeyup="filterMyLoans()" 
+                   class="block w-full pl-11 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500/20 transition-all" 
+                   placeholder="Search by Application ID">
+        </div>
+    </div>
+    
+    <div class="grid grid-cols-1 gap-6" id="loanContainer"></div>
+
+    <div id="pagination" class="hidden bg-white p-6 md:px-6 rounded-[2rem] border border-slate-100 shadow-sm flex flex-col md:flex-row items-center justify-between gap-6 mt-10">
+    
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4 order-1 md:order-2 w-full md:w-auto">
+            
+            <div class="flex items-center justify-center space-x-2 w-full sm:w-auto">
+                <button onclick="changePage(-1)" id="prevBtn" 
+                        class="h-11 w-11 rounded-xl border border-slate-100 bg-slate-50/50 text-slate-500 hover:bg-amber-50 hover:text-amber-600 transition-all">
+                    <i class="fas fa-chevron-left text-sm"></i>
+                </button>
+            </div>
+
+            <div id="pageIndicator" class="flex items-center space-x-2 bg-slate-50/30 p-1.5 rounded-[1.25rem] border border-slate-50">
+                </div>
+
+            <div class="flex items-center justify-center space-x-2 w-full sm:w-auto">
+                <button onclick="changePage(1)" id="nextBtn" 
+                        class="h-11 w-11 rounded-xl border border-slate-100 bg-slate-50/50 text-slate-500 hover:bg-amber-50 hover:text-amber-600 transition-all">
+                    <i class="fas fa-chevron-right text-sm"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="px-5 py-2 bg-slate-50 rounded-full border border-slate-100 order-2 md:order-1 w-fit">
+            <p class="text-[10px] text-slate-400 font-black uppercase tracking-widest leading-none">
+                Showing <span id="startRange" class="text-slate-800 font-black">0</span> - <span id="endRange" class="text-slate-800 font-black">0</span> 
+                <span class="mx-1 text-slate-300">of</span> 
+                <span id="totalEntries" class="text-slate-800 font-black">0</span>
+            </p>
+        </div>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='userPanel/js/repayments/gold_loan_list.js') }}"></script>
+{% endblock content %}

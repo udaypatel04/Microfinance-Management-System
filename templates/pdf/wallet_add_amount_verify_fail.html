@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Verification Failed | FinTrack Security</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <style>
+        .bg-pattern-fail {
+            background-color: #fff1f2;
+            background-image: radial-gradient(#fecdd3 0.5px, transparent 0.5px);
+            background-size: 10px 10px;
+        }
+        .shimmer {
+            background: linear-gradient(90deg, #f43f5e 0%, #fb7185 50%, #f43f5e 100%);
+            background-size: 200% auto;
+            animation: shine 2s linear infinite;
+        }
+        @keyframes shine { to { background-position: 200% center; } }
+    </style>
+</head>
+<body class="bg-pattern-fail min-h-screen flex items-center justify-center p-4">
+
+    <div class="w-full max-w-[400px] bg-white rounded-[2.5rem] shadow-2xl overflow-hidden animate__animated animate__headShake">
+        
+        <div class="bg-rose-600 pt-10 pb-8 px-6 text-center relative overflow-hidden">
+            <div class="w-20 h-20 bg-white/20 rounded-full mx-auto mb-4 flex items-center justify-center border-4 border-white/30 animate__animated animate__pulse animate__infinite">
+                <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </div>
+            <h1 class="text-white text-xl font-black uppercase tracking-[0.2em]">Verification Failed</h1>
+            <p class="text-rose-200 text-[10px] font-bold tracking-widest uppercase mt-2">Invalid or Tampered Record</p>
+            
+            <div class="absolute bottom-0 left-0 w-full h-1 shimmer opacity-50"></div>
+        </div>
+
+        <div class="p-8 space-y-6 text-center">
+            
+            <div class="space-y-3">
+                <div class="inline-flex items-center justify-center w-12 h-12 bg-rose-50 rounded-2xl text-rose-600 mb-2">
+                    <i class="fas fa-exclamation-triangle text-xl"></i>
+                </div>
+                <h2 class="text-lg font-black text-slate-900 leading-tight px-4">This receipt could not be authenticated</h2>
+                <p class="text-slate-500 text-xs leading-relaxed px-2">
+                    The digital signature or transaction reference provided does not match our secure ledger. This may indicate an unauthorized modification or an expired link.
+                </p>
+            </div>
+
+            <div class="bg-slate-50 rounded-2xl p-5 border border-slate-100 text-left space-y-4">
+                <div class="flex gap-3">
+                    <div class="w-5 h-5 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center shrink-0">
+                        <span class="text-[10px] font-black">1</span>
+                    </div>
+                    <p class="text-[10px] text-slate-600 font-medium">Check if the QR code on the paper is clear and unscratched.</p>
+                </div>
+                <div class="flex gap-3">
+                    <div class="w-5 h-5 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center shrink-0">
+                        <span class="text-[10px] font-black">2</span>
+                    </div>
+                    <p class="text-[10px] text-slate-600 font-medium">Verify you are connected to the official FinTrack network.</p>
+                </div>
+                <div class="flex gap-3">
+                    <div class="w-5 h-5 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center shrink-0">
+                        <span class="text-[10px] font-black">3</span>
+                    </div>
+                    <p class="text-[10px] text-slate-600 font-medium">Contact support if you believe this is a system error.</p>
+                </div>
+            </div>
+
+            <a href="" class="block w-full py-4 bg-slate-900 text-white rounded-2xl font-bold text-xs uppercase tracking-widest active:scale-95 transition-all shadow-lg">
+                Report Discrepancy
+            </a>
+            
+            <button onclick="window.close()" class="text-slate-400 text-[10px] font-bold uppercase tracking-widest hover:text-slate-600 transition-colors">
+                Back to Safety
+            </button>
+        </div>
+
+        <div class="bg-rose-50 p-4 border-t border-rose-100 text-center">
+            <p class="text-[8px] text-rose-400 font-black uppercase tracking-widest">
+                Security Protocol: 404_AUTH_FAILURE
+            </p>
+        </div>
+    </div>
+
+</body>
+</html>

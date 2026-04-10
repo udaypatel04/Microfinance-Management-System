@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Offline | FinTrack</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+</head>
+<body class="bg-slate-50 min-h-screen flex items-center justify-center p-6 text-center">
+
+    <div class="max-w-sm w-full animate__animated animate__fadeIn">
+        <div class="w-20 h-20 bg-slate-200 rounded-full mx-auto mb-6 flex items-center justify-center">
+            <svg class="w-10 h-10 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+            </svg>
+        </div>
+
+        <h1 class="text-slate-900 text-2xl font-black uppercase tracking-tighter mb-2">Database Offline</h1>
+        <p class="text-slate-500 text-sm leading-relaxed mb-8">
+            Our servers are currently undergoing brief maintenance to keep your data secure. We'll be back online shortly.
+        </p>
+
+        <button onclick="window.location.reload()" class="inline-flex items-center px-6 py-3 bg-slate-900 text-white text-xs font-bold uppercase tracking-widest rounded-xl hover:bg-slate-800 transition-all active:scale-95 shadow-lg">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+            </svg>
+            Try Again
+        </button>
+
+        <div class="mt-12 pt-8 border-t border-slate-200">
+            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-[0.3em]">FinTrack Security Core</p>
+        </div>
+    </div>
+
+</body>
+</html>

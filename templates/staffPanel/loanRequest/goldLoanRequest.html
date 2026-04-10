@@ -1,0 +1,304 @@
+{% extends "staffPanel/base.html" %}
+
+{% block title %}FinTrack | Gold Loan Request Tracking{% endblock title %}
+
+{% block content %}
+<div class="space-y-8 animate__animated animate__fadeInUp animate__faster pb-10">
+    
+    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 items-center lg:items-start text-center lg:text-left animate__animated animate__fadeInDown">
+        <div>
+            <h1 class="text-2xl font-black text-slate-800 tracking-tight">Gold Loan Request Tracking</h1>
+            <p class="text-sm text-slate-500 font-medium">Monitoring customer gold loan approval status from administration</p>
+        </div>
+    </div>
+
+    <div class="bg-white p-4 rounded-3xl border border-slate-100 shadow-sm transition-all focus-within:shadow-md duration-300">
+        <div class="relative group">
+            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                <i class="fas fa-search text-slate-400 group-focus-within:text-amber-500 transition-all"></i>
+            </div>
+            <input type="text" id="requestSearch" onkeyup="filterRequests()" 
+                   class="block w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all" 
+                   placeholder="Search by id, customer name, mobile or email ID...">
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8" id="requestContainer">
+        </div>
+
+    <div id="pagination" class="hidden bg-white p-6 md:px-6 rounded-[2rem] border border-slate-100 shadow-sm flex flex-col md:flex-row items-center justify-between gap-6">
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4 order-1 md:order-2 w-full md:w-auto">
+            <div class="flex items-center justify-center space-x-2 w-full sm:w-auto">
+                <button onclick="changePage(-1)" id="prevBtn" class="h-11 w-11 rounded-xl border border-slate-100 bg-slate-50/50 text-slate-500 hover:bg-amber-50 transition-all">
+                    <i class="fas fa-chevron-left text-xs"></i>
+                </button>
+            </div>
+            <div id="pageIndicator" class="flex items-center justify-center space-x-2"></div>
+            <div class="flex items-center justify-center space-x-2 w-full sm:w-auto">
+                <button onclick="changePage(1)" id="nextBtn" class="h-11 w-11 rounded-xl border border-slate-100 bg-slate-50/50 text-slate-500 hover:bg-amber-50 transition-all">
+                    <i class="fas fa-chevron-right text-xs"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="px-5 py-2 bg-slate-50 rounded-full border border-slate-100 order-2 md:order-1 w-fit">
+            <p class="text-[10px] text-slate-400 font-black uppercase tracking-widest leading-none">
+                Showing <span id="startRange" class="text-slate-800 font-black">0</span> - <span id="endRange" class="text-slate-800 font-black">0</span> 
+                <span class="mx-1 text-slate-300">of</span> 
+                <span id="totalEntries" class="text-slate-800 font-black">0</span>
+            </p>
+        </div>
+    </div>
+</div>
+
+<div id="detailsModal" class="fixed inset-0 z-[100] hidden">
+    <div class="absolute inset-0 bg-slate-900/90 backdrop-blur-sm animate__animated animate__fadeIn animate__faster" onclick="closeModal()"></div>
+    <div class="absolute inset-0 flex items-center justify-center p-4">
+        <div class="relative bg-white w-full max-w-6xl rounded-[3rem] shadow-2xl overflow-hidden animate__animated animate__zoomIn animate__faster">
+            <div id="modalContent">
+                <div class="bg-slate-900 px-6 md:px-10 py-5 text-white flex justify-between items-center relative overflow-hidden">
+                <div class="absolute -right-10 -top-10 w-48 h-48 bg-amber-500/10 rounded-full blur-[80px]"></div>
+                <div class="relative z-10 flex items-center gap-4 md:gap-6">
+                    <div class="w-12 h-12 rounded-xl bg-amber-500 flex items-center justify-center shadow-lg shadow-amber-900/40">
+                        <i class="fas fa-fingerprint text-lg text-slate-900"></i>
+                    </div>
+                    <div>
+                        <div class="flex flex-col md:flex-row md:items-center gap-1 md:gap-3">
+                            <h2 id="m_name" class="text-lg md:text-xl font-black tracking-tight leading-none">---</h2>
+                            <span id="m_customer_status" class="w-fit px-2 py-0.5 bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 rounded-md text-[8px] font-black uppercase tracking-widest">---</span>
+                        </div>
+                        <p class="text-slate-400 text-[9px] md:text-[10px] font-bold uppercase tracking-[0.2em] mt-1">
+                            APPLICATION ID: <span id="m_app_no">---</span> <span class="mx-2 text-slate-700 hidden md:inline">|</span> APPLIED: <span id="m_apply_date">---</span>
+                            <input type="hidden" id="m_loan_request_id" />
+                            <input type="hidden" id="m_customer_id"/>
+                        </p>
+                    </div>
+                </div>
+                <button onclick="closeModal()" class="relative z-50 w-10 h-10 rounded-xl bg-white/5 hover:bg-rose-500/20 hover:text-rose-500 text-slate-400 border border-white/10 transition-all flex items-center justify-center group">
+                    <i class="fas fa-times transition-transform group-hover:rotate-90"></i>
+                </button>
+            </div>
+
+            <div class="p-6 md:p-10 space-y-5 max-h-[65vh] overflow-y-auto bg-white custom-scrollbar relative">
+                <div class="absolute inset-0 flex items-center justify-center opacity-[0.02] pointer-events-none">
+                    <i class="fas fa-coins text-[200px] -rotate-12 text-slate-900"></i>
+                </div>
+
+                <div class="relative z-10 space-y-5">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
+    
+                        <div class="p-3 bg-slate-50/80 backdrop-blur-sm rounded-2xl border border-slate-100 flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-xl bg-white flex items-center justify-center text-slate-400 shadow-sm shrink-0">
+                                <i class="fas fa-phone-alt text-xs"></i>
+                            </div>
+                            <div class="overflow-hidden">
+                                <span class="text-[10px] font-black text-slate-400 uppercase block mb-0.5">Contact Gateway</span>
+                                <p id="m_phone" class="text-[12px] font-black text-slate-800 leading-none">---</p>
+                                <p id="m_email" class="text-[11px] font-medium text-slate-400 truncate mt-1">---</p>
+                            </div>
+                        </div>
+
+                        <div class="p-3 bg-slate-50/80 backdrop-blur-sm rounded-2xl border border-slate-100 flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-xl bg-white flex items-center justify-center text-amber-500 shadow-sm shrink-0">
+                                <i class="fas fa-calendar-check text-xs"></i>
+                            </div>
+                            <div>
+                                <span class="text-[10px] font-black text-slate-400 uppercase block mb-0.5">Appraisal Schedule</span>
+                                <p id="m_app_date" class="text-[12px] font-black text-slate-800 leading-none">---</p>
+                                <p id="m_app_time" class="text-[11px] font-black text-amber-600 mt-1">---</p>
+                            </div>
+                        </div>
+
+                        <div class="p-3 bg-blue-50/50 backdrop-blur-sm rounded-2xl border border-blue-100 flex items-center gap-3 group/roi">
+                            <div class="w-9 h-9 rounded-xl bg-white flex items-center justify-center text-blue-500 shadow-sm shrink-0">
+                                <i class="fas fa-percent text-xs"></i>
+                            </div>
+                            <div>
+                                <span class="text-[10px] font-black text-blue-700 uppercase block mb-0.5">Interest Rate</span>
+                                <div class="flex items-baseline gap-0.5">
+                                    <span id="m_roi_value" class="text-[12px] font-black text-blue-600 uppercase italic leading-none block">---</span>
+                                    <span class="text-[11px] font-black text-blue-400 uppercase tracking-tighter"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-3 bg-emerald-50/50 backdrop-blur-sm rounded-2xl border border-emerald-100 flex items-center gap-3 group/credit">
+                            <div class="w-9 h-9 rounded-xl bg-white flex items-center justify-center text-emerald-500 shadow-sm shrink-0">
+                                <i class="fas fa-user-lock text-xs"></i>
+                            </div>
+                            <div>
+                                <span class="text-[10px] font-black text-emerald-700 uppercase block mb-0.5">Credit Score</span>
+                                <span id="m_credit_score" class="text-[12px] font-black text-emerald-600 uppercase italic leading-none block">---</span>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="bg-white rounded-[1.5rem] border border-slate-100 p-4 shadow-sm relative overflow-hidden">
+                        <div class="absolute left-0 top-0 h-full w-1.5 bg-amber-400"></div>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-y-4 md:gap-0">
+                            <div class="text-center md:border-r md:border-slate-100">
+                                <span class="text-[10px] font-black text-slate-400 uppercase block mb-1">Gold Purity</span>
+                                <span id="m_purity" class="text-[13px] font-black text-amber-700 bg-amber-100 px-3 py-1 rounded-full uppercase tracking-wider border border-amber-200">---</span>
+                            </div>
+                            <div class="text-center md:border-r md:border-slate-100">
+                                <span class="text-[10px] font-black text-slate-400 uppercase block mb-1">Net Weight</span>
+                                <span id="m_weight" class="text-[13px] font-black text-slate-800">---</span>
+                            </div>
+                            <div class="text-center md:border-r md:border-slate-100">
+                                <span class="text-[10px] font-black text-slate-400 uppercase block mb-1">Gram Rate</span>
+                                <span id="m_rate" class="text-[13px] font-black text-amber-600">₹---</span>
+                            </div>
+                           <div class="text-center group/gst">
+                            <span class="text-[10px] font-black text-slate-400 uppercase block mb-1">Processing Fee (GST Inc.)</span>
+                            
+                            <div class="flex items-center justify-center gap-0.5">
+                                <span class="text-[10px] font-black text-red-500">-</span>
+                                <span id="m_processing" class="text-[13px] font-black text-red-600 tracking-tight">---</span>
+                            </div>
+                            
+                            <span class="text-[10px] font-bold text-red-400/90 uppercase italic tracking-tighter">Deducted</span>
+                        </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
+    
+                        <div class="p-5 bg-slate-900 rounded-[2rem] shadow-xl relative overflow-hidden group">
+                            <div class="absolute -right-6 -top-6 text-8xl text-white/[0.03] group-hover:text-amber-400/[0.08] group-hover:-rotate-12 group-hover:scale-110 transition-all duration-700 pointer-events-none">
+                                <i class="fas fa-coins"></i>
+                            </div>
+                            
+                            <div class="flex justify-between items-start mb-1 relative z-10">
+                                <span class="text-[12px] font-black text-slate-500 uppercase tracking-widest">Requested Principal</span>
+                                <span id="m_tenure" class="text-[11px] font-black text-amber-500 uppercase tracking-widest">---</span>
+                            </div>
+
+                            <div class="relative z-10">
+                                <span id="m_principal" class="text-3xl font-black text-white tracking-tighter block">₹ ---</span>
+                                <span class="text-[12px] text-slate-500 font-bold uppercase italic mt-1 block">
+                                    Est: <span id="m_est" class="text-slate-400">₹ 0.00</span>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="p-5 bg-emerald-600 rounded-[2rem] shadow-xl relative overflow-hidden group">
+                            <div class="absolute -right-6 -top-6 text-8xl text-white/[0.05] group-hover:text-white/[0.12] group-hover:rotate-12 group-hover:scale-110 transition-all duration-700 pointer-events-none">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            
+                            <div class="flex justify-between items-start mb-1 relative z-10">
+                                <span class="text-[12px] font-black text-emerald-100 uppercase tracking-widest">Monthly EMI Amount</span>
+                            
+                            </div>
+
+                            <div class="relative z-10">
+                                <span id="m_emi" class="text-3xl font-black text-white tracking-tighter block">₹ ---</span>
+                                <span class="text-[12px] text-emerald-100 font-bold uppercase italic mt-1 block">
+                                    Net Disburse: <span id="m_disburse" class="text-white">₹ 0.00</span>
+                                </span>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2 flex items-center gap-2"><i class="fas fa-pen-fancy text-amber-500 text-[10px]"></i> Staff Verification Remarks</label>
+                        <textarea id="staffReason" rows="2" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl text-[11px] font-medium text-slate-700 focus:outline-none focus:ring-4 focus:ring-amber-500/5 focus:border-amber-500 transition-all resize-none shadow-inner" placeholder="Enter appraisal reason..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div id="modal_action_bar" class="px-6 md:px-10 py-6 bg-slate-50 border-t border-slate-100 flex flex-col md:flex-row gap-2 md:gap-4">
+                <div id="pending_actions" class="flex flex-col md:flex-row gap-2 md:gap-4 w-full">
+                    <button id="btn_approve" class="flex-[3] py-4 bg-slate-900 hover:bg-emerald-600 text-white rounded-2xl text-[11px] font-black uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-3 active:scale-95 shadow-xl">
+                        <i class="fas fa-check-double text-xs"></i> Approve Application
+                    </button>
+                    <button id="btn_reject" class="flex-1 py-4 bg-white border-2 border-slate-100 text-rose-500 hover:bg-rose-50 rounded-2xl text-[11px] font-black uppercase transition-all">
+                        Reject
+                    </button>
+                </div>
+
+                <div id="modal_status_display" class="hidden w-full p-4 rounded-2xl flex items-center justify-center gap-3 border">
+                    <i id="status_icon" class="fas"></i>
+                    <span id="status_text" class="text-[12px] font-black uppercase tracking-[0.2em]"></span>
+                </div>
+            </div>
+
+          </div>
+        </div>
+  </div>
+</div>
+
+
+
+
+<div id="creditScoreModal" class="fixed inset-0 z-[160] hidden">
+    <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm animate__animated animate__fadeIn animate__faster" onclick="closeCreditScoreModal()"></div>
+    
+    <div class="absolute inset-0 flex items-center justify-center p-4">
+        <div class="relative bg-white w-full max-w-md rounded-[3rem] shadow-2xl overflow-hidden animate__animated animate__zoomIn animate__faster border border-slate-100">
+            
+            <div class="p-8 text-center space-y-4">
+                <div class="relative w-full max-w-[340px] mx-auto overflow-hidden px-4 pt-4">
+                    <svg viewBox="0 0 220 120" class="w-full h-full">
+                        <path d="M30,110 A80,80 0 0,1 62,40" fill="none" stroke="#ef4444" stroke-width="20" />
+                        <path d="M62,40 A80,80 0 0,1 94,25" fill="none" stroke="#f59e0b" stroke-width="20" />
+                        <path d="M94,25 A80,80 0 0,1 126,25" fill="none" stroke="#fbbf24" stroke-width="20" />
+                        <path d="M126,25 A80,80 0 0,1 158,40" fill="none" stroke="#86efac" stroke-width="20" />
+                        <path d="M158,40 A80,80 0 0,1 190,110" fill="none" stroke="#10b981" stroke-width="20" />
+                        
+                        <g id="needle" style="transition: transform 1.2s cubic-bezier(0.19, 1, 0.22, 1); transform-origin: 110px 110px; transform: rotate(-90deg);">
+                            <path d="M110,110 L110,35" stroke="#1e293b" stroke-width="4" stroke-linecap="round" />
+                            <circle cx="110" cy="110" r="9" fill="#1e293b" />
+                            <circle cx="110" cy="110" r="4" fill="white" />
+                        </g>
+                    </svg>
+
+                    <div class="absolute bottom-6 left-0 right-0 flex flex-col items-center">
+                        <span id="live_score_num" class="text-5xl font-black text-slate-800 tracking-tighter">300</span>
+                        <span id="live_status_label" class="text-[10px] font-black px-4 py-1 mt-2 rounded-full bg-slate-100 text-slate-500 uppercase tracking-widest transition-all duration-500">POOR</span>
+                    </div>
+                </div>
+
+                <div class="space-y-4 pt-4">
+                    <div class="relative">
+                        <label class="absolute -top-2 left-6 px-2 bg-white text-[9px] font-black text-slate-400 uppercase tracking-widest z-10">Assign Credit Score</label>
+                        <input type="number" min=300 max=900 id="input_credit_score" placeholder="300-900" oninput="animateGauge(this.value)"
+                            class="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none w-full px-6 py-5 bg-slate-50 border border-slate-200 rounded-[2rem] text-center text-3xl font-black text-slate-800 focus:outline-none focus:ring-4 focus:ring-slate-900/5 focus:border-slate-900 transition-all">
+                        <input type="hidden" id="m_request_status" />
+                        <input type="hidden" id="m_request_id" />
+                    </div>
+                </div>
+
+              <div class="flex flex-col gap-2 pt-4">
+                    <button onclick="saveCreditScore()" class="w-full py-4 bg-slate-900 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-emerald-600 transition-all active:scale-95 shadow-xl order-1">
+                        Confirm & Update
+                    </button>
+
+                    <div class="flex gap-2 order-2">
+                        <button onclick="closeCreditScoreModal()" class="flex-1 py-4 bg-rose-50 text-rose-500 border border-rose-100 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-rose-100 transition-all active:scale-95 shadow-sm">
+                            Cancel
+                        </button>
+
+                        <button onclick="NTC()" class="flex-1 py-4 bg-slate-100 text-slate-500 border border-slate-200 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-blue-500 hover:text-white transition-all active:scale-95 shadow-sm">
+                            NTC
+                        </button>
+                    </div>
+                </div>
+
+                <div class="inline-flex items-center gap-2 px-3 py-1 bg-blue-50 border border-blue-100 rounded-full shadow-sm">
+                    <span class="flex h-2 w-2 rounded-full bg-blue-500 animate-pulse"></span>
+                    <span class="text-[10px] font-black text-blue-700 uppercase tracking-widest">
+                        NTC <span class="mx-1 text-blue-300">|</span> New To Credit
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="{{ url_for('static', filename='staffPanel/js/loanRequest/gold_loan_request.js') }}"></script>
+
+{% endblock content %}
